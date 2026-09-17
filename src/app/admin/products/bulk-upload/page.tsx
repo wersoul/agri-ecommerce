@@ -110,8 +110,10 @@ export default function BulkUploadPage() {
 
   async function handleSubmit() {
     if (rows.length === 0) { alert("ไม่มีสินค้า"); return; }
+    if (!localStorage.getItem("admin_token")) { alert("กรุณาเข้าสู่ระบบใหม่"); router.push("/admin/login"); return; }
     setSubmitting(true);
     setResult(null);
+    console.log(`[BulkUpload] เริ่มบันทึก ${rows.length} รายการ`);
     try {
       const items: any[] = [];
       const errors: string[] = [];
@@ -132,9 +134,11 @@ export default function BulkUploadPage() {
             is_active: 1,
           });
         } catch (e: any) {
+          console.error(`[BulkUpload] upload #${i + 1} (${r.name}) failed:`, e);
           errors.push(`#${i + 1} (${r.name}): ${e.message}`);
         }
       }
+      console.log(`[BulkUpload] uploaded=${items.length}, upload_errors=${errors.length}`);
       if (items.length === 0) {
         setResult({ created: 0, failed: errors.length, errors });
         setSubmitting(false);
@@ -147,6 +151,7 @@ export default function BulkUploadPage() {
         body: JSON.stringify({ items }),
       });
       const data = await res.json();
+      console.log(`[BulkUpload] bulk response:`, { status: res.status, data });
       if (!res.ok) throw new Error(data.error || "bulk failed");
       setResult({ created: data.created, failed: data.failed + errors.length, errors: [...errors, ...(data.errors || [])] });
       if (data.created > 0 && data.failed === 0) {
@@ -155,7 +160,8 @@ export default function BulkUploadPage() {
         setRows((prev) => prev.slice(data.created));
       }
     } catch (e: any) {
-      alert(e.message);
+      console.error("[BulkUpload] fatal error:", e);
+      alert(`เกิดข้อผิดพลาด: ${e.message}`);
     } finally {
       setSubmitting(false);
     }
@@ -223,6 +229,25 @@ export default function BulkUploadPage() {
             </button>
             <button onClick={() => setRows([])} disabled={submitting} className="btn-secondary">ล้างทั้งหมด</button>
           </div>
+        </div>
+      )}
+
+      {result && (
+        <div className={`rounded-lg shadow p-6 mb-6 ${result.created > 0 && result.failed === 0 ? "bg-green-50 border border-green-200" : result.created > 0 ? "bg-yellow-50 border border-yellow-200" : "bg-red-50 border border-red-200"}`}>
+          <h3 className="font-bold text-lg mb-2">
+            {result.created > 0 && result.failed === 0 ? "✅ สำเร็จ" : result.created > 0 ? "⚠️ สำเร็จบางส่วน" : "❌ ล้มเหลว"}
+          </h3>
+          <p className="text-sm mb-2">
+            สร้างสำเร็จ <b>{result.created}</b> รายการ · ล้มเหลว <b>{result.failed}</b> รายการ
+          </p>
+          {result.errors.length > 0 && (
+            <details className="mt-2">
+              <summary className="text-sm text-red-700 cursor-pointer">ดูรายละเอียดข้อผิดพลาด ({result.errors.length})</summary>
+              <ul className="mt-2 text-xs text-red-700 space-y-1 list-disc pl-5">
+                {result.errors.map((e, i) => <li key={i}>{e}</li>)}
+              </ul>
+            </details>
+          )}
         </div>
       )}
     </div>

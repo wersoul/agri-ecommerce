@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
             Number(it.stock) || 0,
             sku,
             it.image_url,
-            it.category_id ? parseInt(String(it.category_id)) : 0,
+            it.category_id ? parseInt(String(it.category_id)) : null,
             it.subcategory_id ? parseInt(String(it.subcategory_id)) : null,
             it.is_active === 0 ? 0 : 1
           )

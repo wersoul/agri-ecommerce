@@ -1,13 +1,23 @@
 #!/usr/bin/env node
 // Script สำหรับสร้าง Admin user บน Cloudflare D1
+// ใช้ PBKDF2 (Web Crypto API compatible) — เร็วใน Cloudflare Workers (<5ms)
 // วิธีใช้:
 //   node scripts/create-admin.js <username> <password> [email] [--remote]
 // ตัวอย่าง:
 //   node scripts/create-admin.js admin admin123 admin@example.com
 //   node scripts/create-admin.js admin admin123 admin@example.com --remote
 
-const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const { execSync } = require('child_process');
+
+const PBKDF2_ITERATIONS = 100_000;
+const PBKDF2_KEYLEN = 32;
+
+function pbkdf2Hash(password) {
+  const salt = crypto.randomBytes(16);
+  const hash = crypto.pbkdf2Sync(password, salt, PBKDF2_ITERATIONS, PBKDF2_KEYLEN, 'sha256');
+  return `pbkdf2$${PBKDF2_ITERATIONS}$${salt.toString('hex')}$${hash.toString('hex')}`;
+}
 
 const args = process.argv.slice(2);
 const remote = args.includes('--remote');
@@ -23,13 +33,14 @@ if (!username || !password) {
 }
 
 const emailValue = email || `${username}@agri-shop.com`;
-const hash = bcrypt.hashSync(password, 10);
+const hash = pbkdf2Hash(password);
 const flag = remote ? '--remote' : '--local';
 
 console.log(`\n🔐 กำลังสร้าง Admin user (${remote ? 'REMOTE' : 'LOCAL'})\n`);
 console.log('Username:', username);
 console.log('Email:', emailValue);
 console.log('Password:', password);
+console.log('Hash:', hash);
 console.log('');
 
 // SQL command - ลบ user เดิม (ถ้ามี) แล้วเพิ่มใหม่

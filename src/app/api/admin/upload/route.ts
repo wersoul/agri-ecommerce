@@ -23,7 +23,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `ประเภทไฟล์ไม่รองรับ: ${file.type}` }, { status: 400 });
     }
     const arrayBuffer = await file.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    const bytes = new Uint8Array(arrayBuffer);
+    // Build base64 in chunks to avoid "Maximum call stack size exceeded"
+    // when the file is large (spread into String.fromCharCode overflows the stack).
+    let binary = "";
+    const CHUNK = 0x8000; // 32 KB
+    for (let i = 0; i < bytes.length; i += CHUNK) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
+    }
+    const base64 = btoa(binary);
     const dataUrl = `data:${file.type || "image/jpeg"};base64,${base64}`;
     return NextResponse.json({
       success: true,
