@@ -295,7 +295,7 @@ function CustomerDetailContent() {
                 return (
                   <div key={o.id} className="px-6 py-3 flex justify-between items-center hover:bg-gray-50">
                     <div>
-                      <Link href={`/admin/orders/${o.id}`} className="font-medium text-gray-900 hover:text-primary-700">#{o.order_number}</Link>
+                      <Link href={`/admin/orders/detail/?id=${o.id}`} className="font-medium text-gray-900 hover:text-primary-700">#{o.order_number}</Link>
                       <div className="text-xs text-gray-500 mt-0.5">
                         {new Date(o.created_at).toLocaleString("th-TH")} • {o.item_count} รายการ
                       </div>
