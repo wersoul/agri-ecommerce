@@ -45,8 +45,8 @@ export default function AdminProductsPage() {
     setLoading(true);
     try {
       const [pRes, cRes] = await Promise.all([
-        fetch("/api/admin/products", { headers: { Authorization: `Bearer ${token}` } }),
-        fetch("/api/admin/categories", { headers: { Authorization: `Bearer ${token}` } }),
+        fetch("/api/admin/products/", { headers: { Authorization: `Bearer ${token}` } }),
+        fetch("/api/admin/categories/", { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       const [pd, cd] = await Promise.all([pRes.json(), cRes.json()]);
       setProducts(Array.isArray(pd) ? pd : []);
@@ -82,7 +82,7 @@ export default function AdminProductsPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const token = localStorage.getItem("admin_token");
-    const url = editing ? `/api/admin/products/${editing.id}` : "/api/admin/products";
+    const url = editing ? `/api/admin/products/${editing.id}/` : "/api/admin/products/";
     const res = await fetch(url, {
       method: editing ? "PUT" : "POST",
       headers: {
@@ -103,7 +103,7 @@ export default function AdminProductsPage() {
   async function handleDelete(id: number) {
     if (!confirm("ยืนยันลบสินค้านี้?")) return;
     const token = localStorage.getItem("admin_token");
-    await fetch(`/api/admin/products/${id}`, {
+    await fetch(`/api/admin/products/${id}/`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });

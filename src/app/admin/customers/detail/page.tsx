@@ -54,7 +54,7 @@ function CustomerDetailContent() {
   async function loadDetail(token: string) {
     setLoading(true);
     try {
-      const r = await fetch(`/api/admin/customers/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await fetch(`/api/admin/customers//`, { headers: { Authorization: `Bearer ${token}` } });
       if (r.status === 401) { router.push("/admin/login"); return; }
       if (!r.ok) { router.push("/admin/customers"); return; }
       const data = await r.json();
@@ -85,7 +85,7 @@ function CustomerDetailContent() {
     setSaving(true);
     setMessage("");
     try {
-      const r = await fetch(`/api/admin/customers/${id}`, {
+      const r = await fetch(`/api/admin/customers//`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(editForm),
@@ -109,7 +109,7 @@ function CustomerDetailContent() {
     if (!customer) return;
     const token = localStorage.getItem("admin_token");
     if (!token) return;
-    const r = await fetch(`/api/admin/customers/${id}`, {
+    const r = await fetch(`/api/admin/customers//`, {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ is_active: customer.is_active ? 0 : 1 }),
@@ -124,7 +124,7 @@ function CustomerDetailContent() {
     if (!customer) return;
     const token = localStorage.getItem("admin_token");
     if (!token) return;
-    const r = await fetch(`/api/admin/customers/${id}`, {
+    const r = await fetch(`/api/admin/customers//`, {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ is_verified: customer.is_verified ? 0 : 1 }),
@@ -142,7 +142,7 @@ function CustomerDetailContent() {
     if (!token) return;
     setDeleting(true);
     try {
-      const r = await fetch(`/api/admin/customers/${id}`, {
+      const r = await fetch(`/api/admin/customers//`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

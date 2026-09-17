@@ -51,7 +51,7 @@ function OrderDetailContent() {
   async function loadOrder(token: string) {
     setLoading(true);
     try {
-      const r = await fetch(`/api/admin/orders/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await fetch(`/api/admin/orders/${id}/`, { headers: { Authorization: `Bearer ${token}` } });
       if (r.status === 401) { window.location.href = "/admin/login"; return; }
       if (!r.ok) { window.location.href = "/admin/orders"; return; }
       const data = await r.json();
@@ -67,7 +67,7 @@ function OrderDetailContent() {
 
   async function loadProductOptions(token: string) {
     try {
-      const r = await fetch(`/api/admin/products`, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await fetch(`/api/admin/products/`, { headers: { Authorization: `Bearer ${token}` } });
       if (r.ok) {
         const data = await r.json();
         setProductOptions((data || []).map((p: any) => ({ id: p.id, name: p.name, price: p.price })));
@@ -102,7 +102,7 @@ function OrderDetailContent() {
     if (!token) return;
     setSaving(true); setMessage("");
     try {
-      const r = await fetch(`/api/admin/orders/${id}`, {
+      const r = await fetch(`/api/admin/orders/${id}/`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ status, shipping, note, extra_info: extraInfo, items: editItems }),
@@ -122,7 +122,7 @@ function OrderDetailContent() {
     if (!token) return;
     setDeleting(true);
     try {
-      const r = await fetch(`/api/admin/orders/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      const r = await fetch(`/api/admin/orders/${id}/`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       if (r.ok) window.location.href = "/admin/orders";
       else { const d = await r.json().catch(() => ({})); setMessage("❌ ลบไม่สำเร็จ: " + (d.error || "")); setDeleting(false); }
     } catch (e: any) { setMessage("❌ " + (e.message || "")); setDeleting(false); }

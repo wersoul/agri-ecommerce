@@ -27,7 +27,7 @@ export default function AdminCustomersPage() {
   async function loadCustomers(token: string, q: string) {
     setLoading(true); setError("");
     try {
-      const r = await fetch(`/api/admin/customers${q ? `?search=${encodeURIComponent(q)}` : ""}`, {
+      const r = await fetch(`/api/admin/customers/${q ? `?search=${encodeURIComponent(q)}` : ""}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (r.status === 401) { router.push("/admin/login"); return; }
@@ -109,7 +109,7 @@ export default function AdminCustomersPage() {
                     <button onClick={async () => {
                       if (!confirm(`ต้องการลบสมาชิก "${c.full_name}" (${c.email}) หรือไม่?\n\n⚠️ ออร์เดอร์ที่สั่งซื้อจะยังคงอยู่ แต่ customer_id จะถูกตัดออก`)) return;
                       const tok = localStorage.getItem("admin_token");
-                      const r = await fetch(`/api/admin/customers/${c.id}`, { method: "DELETE", headers: { Authorization: `Bearer ${tok}` } });
+                      const r = await fetch(`/api/admin/customers/${c.id}/`, { method: "DELETE", headers: { Authorization: `Bearer ${tok}` } });
                       if (r.ok) {
                         loadCustomers(tok!, search);
                       } else {

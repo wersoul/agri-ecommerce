@@ -27,7 +27,7 @@ export default function AdminCategoriesPage() {
   async function loadData() {
     const token = localStorage.getItem("admin_token");
     try {
-      const res = await fetch("/api/admin/categories", {
+      const res = await fetch("/api/admin/categories/", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -57,7 +57,7 @@ export default function AdminCategoriesPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const token = localStorage.getItem("admin_token");
-    const url = editing ? `/api/admin/categories/${editing.id}` : "/api/admin/categories";
+    const url = editing ? `/api/admin/categories/${editing.id}/` : "/api/admin/categories/";
     const res = await fetch(url, {
       method: editing ? "PUT" : "POST",
       headers: {
@@ -78,7 +78,7 @@ export default function AdminCategoriesPage() {
   async function handleDelete(id: number) {
     if (!confirm("ยืนยันลบหมวดหมู่นี้?")) return;
     const token = localStorage.getItem("admin_token");
-    await fetch(`/api/admin/categories/${id}`, {
+    await fetch(`/api/admin/categories/${id}/`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });

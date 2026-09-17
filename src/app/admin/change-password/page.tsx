@@ -45,7 +45,7 @@ export default function AdminChangePasswordPage() {
 
     setSubmitting(true);
     try {
-      const r = await fetch("/api/admin/change-password", {
+      const r = await fetch("/api/admin/change-password/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

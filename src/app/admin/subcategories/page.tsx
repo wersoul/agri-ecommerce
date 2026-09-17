@@ -36,8 +36,8 @@ export default function AdminSubcategoriesPage() {
     setLoading(true);
     try {
       const [sRes, cRes] = await Promise.all([
-        fetch("/api/admin/subcategories", { headers: { Authorization: `Bearer ${token}` } }),
-        fetch("/api/admin/categories", { headers: { Authorization: `Bearer ${token}` } }),
+        fetch("/api/admin/subcategories/", { headers: { Authorization: `Bearer ${token}` } }),
+        fetch("/api/admin/categories/", { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       const [sd, cd] = await Promise.all([sRes.json(), cRes.json()]);
       setSubcategories(Array.isArray(sd) ? sd : []);
@@ -69,7 +69,7 @@ export default function AdminSubcategoriesPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const token = localStorage.getItem("admin_token");
-    const url = editing ? `/api/admin/subcategories/${editing.id}` : "/api/admin/subcategories";
+    const url = editing ? `/api/admin/subcategories/${editing.id}/` : "/api/admin/subcategories/";
     const res = await fetch(url, {
       method: editing ? "PUT" : "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -87,7 +87,7 @@ export default function AdminSubcategoriesPage() {
   async function handleDelete(id: number) {
     if (!confirm("ยืนยันลบประเภทย่อยนี้?")) return;
     const token = localStorage.getItem("admin_token");
-    await fetch(`/api/admin/subcategories/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+    await fetch(`/api/admin/subcategories/${id}/`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
     loadData();
   }
 

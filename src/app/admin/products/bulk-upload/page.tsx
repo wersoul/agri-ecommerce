@@ -25,7 +25,7 @@ export default function BulkUploadPage() {
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
     if (!token) { router.push("/admin/login"); return; }
-    fetch("/api/admin/categories", { headers: { Authorization: `Bearer ${token}` } })
+    fetch("/api/admin/categories/", { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then((d) => {
         setCategories(Array.isArray(d) ? d : []);
@@ -102,7 +102,7 @@ export default function BulkUploadPage() {
     const fd = new FormData();
     fd.append("file", row.image_file);
     const token = localStorage.getItem("admin_token");
-    const r = await fetch("/api/admin/upload", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd });
+    const r = await fetch("/api/admin/upload/", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd });
     const data = await r.json();
     if (!r.ok || !data.url) throw new Error(data.error || "upload failed");
     return data.url;

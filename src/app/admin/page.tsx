@@ -137,10 +137,10 @@ export default function AdminDashboard() {
       return;
     }
     Promise.all([
-      fetch("/api/admin/products", { headers: { Authorization: `Bearer ${token}` } }).then((r) => (r.ok ? r.json() : [])),
-      fetch("/api/admin/categories", { headers: { Authorization: `Bearer ${token}` } }).then((r) => (r.ok ? r.json() : [])),
-      fetch("/api/admin/orders", { headers: { Authorization: `Bearer ${token}` } }).then((r) => (r.ok ? r.json() : [])),
-      fetch("/api/admin/customers", { headers: { Authorization: `Bearer ${token}` } }).then((r) => (r.ok ? r.json() : { customers: [] })),
+      fetch("/api/admin/products/", { headers: { Authorization: `Bearer ${token}` } }).then((r) => (r.ok ? r.json() : [])),
+      fetch("/api/admin/categories/", { headers: { Authorization: `Bearer ${token}` } }).then((r) => (r.ok ? r.json() : [])),
+      fetch("/api/admin/orders/", { headers: { Authorization: `Bearer ${token}` } }).then((r) => (r.ok ? r.json() : [])),
+      fetch("/api/admin/customers/", { headers: { Authorization: `Bearer ${token}` } }).then((r) => (r.ok ? r.json() : { customers: [] })),
     ]).then(([products, categories, orders, customersData]) => {
       setStats({
         products: Array.isArray(products) ? products.length : 0,

@@ -35,7 +35,7 @@ export default function AdminContactPage() {
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
     if (!token) { router.push("/admin/login"); return; }
-    fetch("/api/admin/settings", { headers: { Authorization: `Bearer ${token}` } })
+    fetch("/api/admin/settings/", { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.ok ? r.json() : Promise.reject(r.status))
       .then((d) => { if (d.settings) setS({ ...EMPTY, ...d.settings }); setLoading(false); })
       .catch(() => setLoading(false));
@@ -51,7 +51,7 @@ export default function AdminContactPage() {
     setSaved(false);
     try {
       const token = localStorage.getItem("admin_token");
-      const r = await fetch("/api/admin/settings", {
+      const r = await fetch("/api/admin/settings/", {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ settings: s }),
