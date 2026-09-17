@@ -3,9 +3,11 @@
 เว็บไซต์ขายอะไหล่เกษตรและอุปกรณ์การเกษตร พร้อมระบบหลังบ้านจัดการสินค้า/หมวดหมู่/คำสั่งซื้อ
 
 > **Production Status (Sep 2026):**
+> - ✅ Live ที่ https://knkpart.pages.dev
 > - ✅ ล้างข้อมูลสินค้า/หมวดหมู่/สมาชิกเริ่มต้น (ตารางว่าง)
-> - ✅ Deploy บน Cloudflare Pages project name `knkpart`
-> - ✅ D1 database `knkpart-db` (ต้องสร้างใหม่)
+> - ✅ Deploy บน Cloudflare Pages project `knkpart` (id: `4712791e-...`)
+> - ✅ D1 database `knkpart-db` (id: `34f14d8d-...`) APAC region
+> - ✅ Admin user: `admin` (password ตั้งใน deployment ดู `DEPLOY_PRODUCTION.md`)
 > - 🔐 ผู้ดูแลตั้งค่า Admin + สินค้า/หมวดหมู่ผ่าน Admin UI
 
 ## ✨ ฟีเจอร์

@@ -7,6 +7,4 @@ pages_build_output_dir = ".vercel/output/static"
 [[d1_databases]]
 binding = "DB"
 database_name = "knkpart-db"
-# NOTE: database_id ต้องสร้าง D1 database ใหม่บน Cloudflare และใส่ ID ที่ได้ที่นี่
-# รันคำสั่ง: wrangler d1 create knkpart-db
-database_id = "REPLACE_WITH_NEW_DATABASE_ID"
+database_id = "34f14d8d-b16a-41c1-86b0-7426139ef5ea"  # APAC region - สร้าง 2026-09-17

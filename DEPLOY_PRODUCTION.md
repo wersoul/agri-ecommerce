@@ -1,158 +1,143 @@
 # 🚀 Production Deployment Guide - KNK Part
 
-> **Project:** `knkpart` (Cloudflare Pages)
-> **Database:** `knkpart-db` (Cloudflare D1)
-> **URL:** https://knkpart.pages.dev
-> **Status:** Production - ล้างข้อมูลเริ่มต้นแล้ว
+> **Project:** `knkpart` (Cloudflare Pages) ✅ DEPLOYED
+> **Database:** `knkpart-db` (Cloudflare D1) ✅ CREATED
+> **URL:** https://knkpart.pages.dev ✅ LIVE
+> **Status:** Production - ล้างข้อมูลเริ่มต้นแล้ว ✅ VERIFIED
 
 ---
 
-## ⚠️ สิ่งที่ต้องทำก่อน Deploy
+## ✅ DEPLOYED - Verified Working
 
-### 1. Login Cloudflare
+| Resource | Value |
+|---|---|
+| **Pages Project** | `knkpart` (id: `4712791e-9ff4-4b99-b632-6cad0d1f4250`) |
+| **D1 Database** | `knkpart-db` (id: `34f14d8d-b16a-41c1-86b0-7426139ef5ea`) |
+| **Region** | APAC |
+| **Production URL** | https://knkpart.pages.dev |
+| **Latest Deployment** | https://b35147c5.knkpart.pages.dev |
+| **Deployed At** | 2026-09-17 |
+| **D1 Binding** | `DB` → `34f14d8d-b16a-41c1-86b0-7426139ef5ea` (auto-configured) |
+| **JWT_SECRET** | ✅ Configured (random 96 hex chars) |
+| **Admin User** | `admin` / `KnkAdmin2026!` |
 
-```bash
-npx wrangler login
+---
+
+## ✅ Live Verification
+
+| Check | Result |
+|---|---|
+| Home page (https://knkpart.pages.dev/) | ✅ 200 OK, Title: "KNK Part (เคเอ็นเค พาร์ท)" |
+| Admin login API (`POST /api/admin/login/`) | ✅ 200 OK, JWT token returned |
+| `/api/categories/` (public) | ✅ `{"categories":[]}` |
+| `/api/products/` (public) | ✅ `{"products":[]}` |
+| `/api/admin/categories/` POST | ✅ Category created successfully |
+| D1 Tables | ✅ 9 tables: admins, categories, customers, customer_otps, order_items, orders, products, site_settings, subcategories |
+| D1 Records | ✅ admins=1, site_settings=12, **all product/customer tables = 0** |
+
+---
+
+## 🔐 Admin Credentials (CHANGE AFTER FIRST LOGIN)
+
+```
+URL:      https://knkpart.pages.dev/admin/login
+Username: admin
+Password: KnkAdmin2026!
+Email:    admin@knkpart.com
 ```
 
-หรือใช้ API Token:
-```bash
-export CLOUDFLARE_API_TOKEN="your-cloudflare-api-token"
-# ต้องมี permission: Pages: Edit, D1: Edit, Account Settings: Read
-```
+⚠️ **สำคัญ:** เปลี่ยนรหัสผ่านทันทีหลัง login ครั้งแรก ผ่านหน้า "Change Password"
 
-### 2. สร้าง D1 Database ใหม่
+---
 
+## 📋 ขั้นตอน Deploy ที่ใช้ (สำหรับอ้างอิง)
+
+### 1. สร้าง D1 Database
 ```bash
 npx wrangler d1 create knkpart-db
+# → ได้ database_id: 34f14d8d-b16a-41c1-86b0-7426139ef5ea
 ```
 
-จะได้ `database_id` กลับมา เช่น:
-```
-✅ Successfully created DB 'knkpart-db' in region APAC
-database_id = "abcd1234-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-```
-
-### 3. ใส่ `database_id` ใน wrangler.toml
-
-แก้ไขไฟล์ `/Users/xzibits/.cline/data/workspaces/chat/agri-ecommerce/wrangler.toml`:
-
+### 2. อัพเดท `wrangler.toml`
 ```toml
 [[d1_databases]]
 binding = "DB"
 database_name = "knkpart-db"
-database_id = "abcd1234-xxxx-xxxx-xxxx-xxxxxxxxxxxx"  # 👈 ใส่ ID ที่ได้
+database_id = "34f14d8d-b16a-41c1-86b0-7426139ef5ea"
 ```
 
-### 4. สร้าง Cloudflare Pages Project
-
+### 3. สร้าง Pages Project
 ```bash
-npx wrangler pages project create knkpart --production-branch=main --compatibility-date=2024-07-01 --compatibility-flag=nodejs_compat
+CLOUDFLARE_ACCOUNT_ID="<account_id>" npx wrangler pages project create knkpart --production-branch=main
 ```
 
-### 5. ผูก D1 binding กับ Pages project
+### 4. รัน Migrations (Production)
+```bash
+npx wrangler d1 execute knkpart-db --remote --file=./migrations/0001_initial.sql
+npx wrangler d1 execute knkpart-db --remote --file=./migrations/0005_site_settings.sql
+npx wrangler d1 execute knkpart-db --remote --file=./migrations/0008_customers.sql
+npx wrangler d1 execute knkpart-db --remote --file=./migrations/0009_admin_updated_at.sql
+npx wrangler d1 execute knkpart-db --remote --file=./migrations/0010_subcategories.sql
+npx wrangler d1 execute knkpart-db --remote --file=./migrations/0011_member_extra.sql
+```
 
-ผ่าน Dashboard: https://dash.cloudflare.com → Pages → `knkpart` → Settings → Functions → D1 database bindings
-- Variable name: `DB`
-- D1 Database: `knkpart-db`
+### 5. สร้าง Admin User
+```bash
+# ใช้ bcryptjs hash (rounds=8 เพื่อ performance ใน Workers):
+node -e "console.log(require('bcryptjs').hashSync('KnkAdmin2026!', 8))"
+# → $2a$08$GDCdfuQvadrBzfRdcdyVduB39RDL.g0G7F.q3jqlSRXWzkZsBXpXG
+
+# INSERT into admins (รหัสผ่าน hash อยู่แล้ว):
+npx wrangler d1 execute knkpart-db --remote --command="INSERT INTO admins (username, password_hash, email) VALUES ('admin', '\$2a\$08\$GDCdfuQvadrBzfRdcdyVduB39RDL.g0G7F.q3jqlSRXWzkZsBXpXG', 'admin@knkpart.com')"
+```
+
+### 6. ตั้ง JWT_SECRET
+```bash
+JWT=$(node -e "console.log(require('crypto').randomBytes(48).toString('hex'))")
+CLOUDFLARE_ACCOUNT_ID="<account_id>" npx wrangler pages secret put JWT_SECRET --project-name=knkpart <<< "$JWT"
+```
+
+### 7. Build & Deploy
+```bash
+npm run build       # next build
+npx next-on-pages   # แปลงเป็น Cloudflare Functions
+npm run postbuild   # patch async_hooks (Node 26 fix - Patched 0 in this build)
+CLOUDFLARE_ACCOUNT_ID="<account_id>" npx wrangler pages deploy .vercel/output/static --project-name=knkpart --branch=main
+```
+
+D1 binding จะถูก auto-configure จาก `wrangler.toml` ตอน deploy
 
 ---
 
-## 📋 ขั้นตอน Deploy
+## 📧 Email Setup (Optional - สำหรับ Order Notifications)
 
-### 1. รัน Migrations (Production)
-
+### Resend (แนะนำ)
 ```bash
-cd /Users/xzibits/.cline/data/workspaces/chat/agri-ecommerce
-npm run db:remote
-```
-
-ไฟล์ที่จะรัน (เป็น schema เท่านั้น - ไม่มี seed data):
-- `0001_initial.sql` - ตาราง categories, products, admins, orders, order_items
-- `0005_site_settings.sql` - ตาราง site_settings (มี default `shop_name=KNK Part`)
-- `0008_customers.sql` - ตาราง customers + customer_otps
-- `0009_admin_updated_at.sql`
-- `0010_subcategories.sql`
-- `0011_member_extra.sql`
-
-ไฟล์เหล่านี้ถูก clear แล้ว (ไม่มี INSERT):
-- `0002_seed.sql` (เคยมี categories 6 หมวด + products 16 ชิ้น - ลบแล้ว)
-- `0003_knkpart.sql` (เคยมี categories 12 หมวด + products ~40 ชิ้น - ลบแล้ว)
-- `0004_fix_images.sql`, `0006_update_product_images.sql`, `0007_update_category_images.sql` (UPDATE ที่ไม่มี target - ลบแล้ว)
-
-### 2. สร้าง Admin User คนแรก
-
-```bash
-node scripts/create-admin.js admin <password> admin@knkpart.com --remote
-```
-
-ตัวอย่าง:
-```bash
-node scripts/create-admin.js admin "MyStrongPass#2026" admin@knkpart.com --remote
-```
-
-✅ หลัง deploy Admin สามารถ Login ได้ที่ https://knkpart.pages.dev/admin/login
-
-### 3. ตั้ง JWT Secret (สำคัญสำหรับ Production)
-
-```bash
-npx wrangler pages secret put JWT_SECRET --project-name=knkpart
-# paste secret (เช่น random 64-char hex)
-```
-
-### 4. ตั้งค่า Email (ถ้าต้องการแจ้งเตือน order)
-
-```bash
-# สำหรับ Resend
 npx wrangler pages secret put EMAIL_API_KEY --project-name=knkpart
 npx wrangler pages secret put EMAIL_PROVIDER --project-name=knkpart  # พิมพ์: resend
 npx wrangler pages secret put EMAIL_FROM --project-name=knkpart      # พิมพ์: KNK Part <noreply@yourdomain.com>
 ```
 
-หรือใช้ Gmail:
+### Gmail
 ```bash
 node scripts/get-gmail-token.js
 ```
 
-### 5. Build และ Deploy
-
-```bash
-npm run deploy
-```
-
-หรือทีละขั้น:
-```bash
-npm run build      # next build
-npx next-on-pages  # แปลงเป็น Cloudflare Functions
-npm run postbuild  # patch async_hooks (Node 26 fix)
-npx wrangler pages deploy .vercel/output/static --project-name=knkpart
-```
-
 ---
 
-## ✅ ตรวจสอบหลัง Deploy
+## 🔧 Environment Variables ที่ใช้ในการ Deploy
 
-1. **หน้าแรก**: https://knkpart.pages.dev
-   - ควรเห็น hero "อะไหล่เกษตร อะไหล่เครื่องมือ เครื่องมือเกษตร"
-   - **ไม่มีสินค้า/หมวดหมู่** ในหน้าแรก (เพราะล้าง seed data แล้ว)
-
-2. **Admin Login**: https://knkpart.pages.dev/admin/login
-   - Login ด้วย credentials ที่สร้างในขั้นตอนที่ 2
-
-3. **ตรวจสอบ D1**:
-   ```bash
-   npx wrangler d1 execute knkpart-db --remote --command="SELECT name FROM sqlite_master WHERE type='table'"
-   ```
-   ควรเห็น: categories, products, admins, orders, order_items, customers, customer_otps, site_settings, subcategories
-
-4. **ทดสอบสร้างหมวดหมู่/สินค้า**: ผ่าน Admin UI
+| Var | Value | Notes |
+|---|---|---|
+| `CLOUDFLARE_ACCOUNT_ID` | `8dcf38404b9ad65e2466814fdc392e16` | Account "Ping105@gmail.com's Account" |
+| `CLOUDFLARE_API_TOKEN` | (ว่าง) | ใช้ OAuth session ของ wrangler แทน |
 
 ---
 
 ## 🔐 Security Checklist
 
 - [ ] เปลี่ยน admin password ทันทีหลัง first login
-- [ ] ตั้ง `JWT_SECRET` ที่แข็งแรง (random 64+ chars)
+- [x] ตั้ง `JWT_SECRET` ที่แข็งแรง (random 96 hex chars)
 - [ ] เปิด 2FA บน Cloudflare account
 - [ ] ตั้ง custom domain (optional)
 - [ ] ตั้ง email provider สำหรับ order notifications
@@ -163,3 +148,4 @@ npx wrangler pages deploy .vercel/output/static --project-name=knkpart
 
 - **GitHub:** https://github.com/wersoul/agri-ecommerce
 - **Production URL:** https://knkpart.pages.dev
+- **Latest Deployment URL:** https://b35147c5.knkpart.pages.dev
