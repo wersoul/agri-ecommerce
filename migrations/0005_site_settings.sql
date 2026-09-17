@@ -8,17 +8,17 @@ CREATE TABLE IF NOT EXISTS site_settings (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Seed default values (will be replaced by admin UI)
+-- Seed default values (Production - CLEARED, ผู้ดูแลตั้งค่าผ่าน Admin UI)
 INSERT OR IGNORE INTO site_settings (key, value) VALUES
     ('shop_name', 'KNK Part'),
-    ('shop_tagline', 'เคเอ็นเค พาร์ท - อะไหล่เกษตร อะไหล่เครื่องมือ เครื่องมือเกษตร'),
-    ('contact_phone', '02-XXX-XXXX'),
-    ('contact_mobile', '08X-XXX-XXXX'),
-    ('contact_email', 'contact@knkpart.com'),
-    ('contact_line_id', '@knkpart'),
-    ('contact_facebook', 'KNK Part'),
-    ('contact_address', '123/4 หมู่ 5 ตำบลXXX อำเภอXXX จังหวัดXXX 10000'),
-    ('contact_hours', 'จันทร์-เสาร์ 8:00-17:00 น.'),
+    ('shop_tagline', 'อะไหล่เกษตร อะไหล่เครื่องมือ เครื่องมือเกษตร'),
+    ('contact_phone', ''),
+    ('contact_mobile', ''),
+    ('contact_email', ''),
+    ('contact_line_id', ''),
+    ('contact_facebook', ''),
+    ('contact_address', ''),
+    ('contact_hours', ''),
     ('contact_map_url', ''),
     ('shipping_note', 'จัดส่งทั่วประเทศ ค่าจัดส่งตามจริง'),
-    ('about_text', 'KNK Part ร้านขายอะไหล่เกษตร อะไหล่เครื่องมือ เครื่องมือเกษตรครบวงจร ดำเนินธุรกิจด้านอะไหล่เกษตรมาอย่างยาวนาน คัดสรรแต่อะไหล่เครื่องมือเกษตรคุณภาพดี ราคาเป็นกันเอง');
+    ('about_text', '');

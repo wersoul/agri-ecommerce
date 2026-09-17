@@ -3,7 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const SITE_URL = "https://agri-ecommerce.pages.dev";
+const SITE_URL = "https://knkpart.pages.dev";
 const SITE_NAME = "KNK Part";
 const SITE_NAME_TH = "เคเอ็นเค พาร์ท";
 const SEO_KEYWORDS = [

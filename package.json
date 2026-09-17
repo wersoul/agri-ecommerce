@@ -1,5 +1,5 @@
 {
-  "name": "agri-ecommerce",
+  "name": "knkpart",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,15 +8,15 @@
     "start": "next start",
     "lint": "next lint",
     "preview": "next build && next-on-pages && wrangler pages dev .vercel/output/static",
-    "deploy": "next build && next-on-pages && wrangler pages deploy .vercel/output/static --project-name=agri-ecommerce",
+    "deploy": "next build && next-on-pages && wrangler pages deploy .vercel/output/static --project-name=knkpart",
     "cf:dev": "next dev",
     "cf:preview": "next build && next-on-pages && wrangler pages dev .vercel/output/static",
     "postbuild": "node scripts/post-build.js",
-    "db:local": "wrangler d1 execute agri-ecommerce-db --local --file=./migrations/0001_initial.sql",
-    "db:remote": "wrangler d1 execute agri-ecommerce-db --remote --file=./migrations/0001_initial.sql",
-    "db:seed:local": "wrangler d1 execute agri-ecommerce-db --local --file=./migrations/0002_seed.sql",
-    "db:seed:remote": "wrangler d1 execute agri-ecommerce-db --remote --file=./migrations/0002_seed.sql",
-    "admin:create": "node scripts/create-admin.js admin admin123 admin@agri-shop.com"
+    "db:local": "wrangler d1 execute knkpart-db --local --file=./migrations/0001_initial.sql",
+    "db:remote": "wrangler d1 execute knkpart-db --remote --file=./migrations/0001_initial.sql",
+    "db:seed:local": "wrangler d1 execute knkpart-db --local --file=./migrations/0002_seed.sql",
+    "db:seed:remote": "wrangler d1 execute knkpart-db --remote --file=./migrations/0002_seed.sql",
+    "admin:create": "node scripts/create-admin.js admin admin123 admin@knkpart.com"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

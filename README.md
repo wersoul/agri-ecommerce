@@ -1,6 +1,12 @@
-# 🌾 AgriParts - ร้านอะไหล่เกษตร E-Commerce
+# 🌾 KNK Part - ร้านอะไหล่เกษตร E-Commerce
 
 เว็บไซต์ขายอะไหล่เกษตรและอุปกรณ์การเกษตร พร้อมระบบหลังบ้านจัดการสินค้า/หมวดหมู่/คำสั่งซื้อ
+
+> **Production Status (Sep 2026):**
+> - ✅ ล้างข้อมูลสินค้า/หมวดหมู่/สมาชิกเริ่มต้น (ตารางว่าง)
+> - ✅ Deploy บน Cloudflare Pages project name `knkpart`
+> - ✅ D1 database `knkpart-db` (ต้องสร้างใหม่)
+> - 🔐 ผู้ดูแลตั้งค่า Admin + สินค้า/หมวดหมู่ผ่าน Admin UI
 
 ## ✨ ฟีเจอร์
 
@@ -75,14 +81,14 @@ wrangler login
 ### 3. สร้าง D1 Database
 
 ```bash
-wrangler d1 create agri-ecommerce-db
+wrangler d1 create knkpart-db
 ```
 
 คัดลอก `database_id` ที่ได้ไปใส่ใน `wrangler.toml`:
 ```toml
 [[d1_databases]]
 binding = "DB"
-database_name = "agri-ecommerce-db"
+database_name = "knkpart-db"
 database_id = "xxxx-xxxx-xxxx"  # ใส่ ID ที่นี่
 ```
 
@@ -111,7 +117,7 @@ npm run deploy
 2. Pages > Create a project > Connect to Git
 3. Build command: `npm run build`
 4. Build output directory: `.vercel/output/static`
-5. เพิ่ม D1 binding: Variable name = `DB`, D1 Database = `agri-ecommerce-db`
+5. เพิ่ม D1 binding: Variable name = `DB`, D1 Database = `knkpart-db`
 
 ## 🔑 การเข้าสู่ระบบ Admin
 
@@ -135,7 +141,7 @@ API endpoint: `POST /api/admin/change-password` body `{ current_password, new_pa
 node -e "console.log(require('bcryptjs').hashSync('รหัสผ่านใหม่', 8))"
 
 # 2. อัพเดทในฐานข้อมูล
-wrangler d1 execute agri-ecommerce-db --remote --command="UPDATE admins SET password_hash = 'HASH_ใหม่' WHERE username = 'admin'"
+wrangler d1 execute knkpart-db --remote --command="UPDATE admins SET password_hash = 'HASH_ใหม่' WHERE username = 'admin'"
 ```
 
 ### เปลี่ยนรหัสผ่านสมาชิก (Customer)
@@ -169,9 +175,9 @@ Upload endpoint: `POST /api/admin/upload` (multipart/form-data field=file) → r
 
 ตั้งค่า secrets:
 ```bash
-wrangler pages secret put EMAIL_API_KEY --project-name=agri-ecommerce
-wrangler pages secret put EMAIL_PROVIDER --project-name=agri-ecommerce  # 'resend' (default) | 'sendgrid' | 'mailgun'
-wrangler pages secret put EMAIL_FROM --project-name=agri-ecommerce      # 'KNK Part <noreply@knkpart.com>'
+wrangler pages secret put EMAIL_API_KEY --project-name=knkpart
+wrangler pages secret put EMAIL_PROVIDER --project-name=knkpart  # 'resend' (default) | 'sendgrid' | 'mailgun'
+wrangler pages secret put EMAIL_FROM --project-name=knkpart      # 'KNK Part <noreply@knkpart.com>'
 ```
 
 ## 🔐 Environment Variables (Optional)
@@ -179,7 +185,7 @@ wrangler pages secret put EMAIL_FROM --project-name=agri-ecommerce      # 'KNK P
 สร้าง secret สำหรับ JWT:
 
 ```bash
-wrangler pages secret put JWT_SECRET --project-name=agri-ecommerce
+wrangler pages secret put JWT_SECRET --project-name=knkpart
 ```
 
 ## 📝 หมายเหตุ

@@ -12,4 +12,4 @@ const hash = bcrypt.hashSync(password, 10);
 console.log('Password:', password);
 console.log('Hash:', hash);
 console.log('\nใช้คำสั่งนี้เพื่ออัพเดทใน D1:');
-console.log(`wrangler d1 execute agri-ecommerce-db --remote --command="UPDATE admins SET password_hash='${hash}' WHERE username='admin'"`);
+console.log(`wrangler d1 execute knkpart-db --remote --command="UPDATE admins SET password_hash='${hash}' WHERE username='admin'"`);

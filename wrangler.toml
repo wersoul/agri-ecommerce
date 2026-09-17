@@ -1,4 +1,4 @@
-name = "agri-ecommerce"
+name = "knkpart"
 compatibility_date = "2024-07-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
@@ -6,5 +6,7 @@ pages_build_output_dir = ".vercel/output/static"
 # D1 Database binding
 [[d1_databases]]
 binding = "DB"
-database_name = "agri-ecommerce-db"
-database_id = "c8cad5c0-2b51-4cbd-b5b5-18d6485d392f"  # APAC region
+database_name = "knkpart-db"
+# NOTE: database_id ต้องสร้าง D1 database ใหม่บน Cloudflare และใส่ ID ที่ได้ที่นี่
+# รันคำสั่ง: wrangler d1 create knkpart-db
+database_id = "REPLACE_WITH_NEW_DATABASE_ID"

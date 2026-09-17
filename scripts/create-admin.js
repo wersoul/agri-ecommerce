@@ -36,7 +36,7 @@ console.log('');
 const sql = `DELETE FROM admins WHERE username='${username}'; INSERT INTO admins (username, password_hash, email) VALUES ('${username}', '${hash}', '${emailValue}');`;
 
 try {
-  execSync(`npx wrangler d1 execute agri-ecommerce-db ${flag} --command="${sql}"`, {
+  execSync(`npx wrangler d1 execute knkpart-db ${flag} --command="${sql}"`, {
     stdio: 'inherit',
   });
   console.log(`\n✅ เพิ่ม Admin สำเร็จ (${remote ? 'REMOTE' : 'LOCAL'})`);
@@ -46,7 +46,7 @@ try {
   console.log('\n💡 ตรวจสอบ:');
   console.log('   1. ติดตั้ง wrangler: npm install -g wrangler');
   console.log('   2. Login cloudflare: wrangler login');
-  console.log('   3. สร้าง D1 database: wrangler d1 create agri-ecommerce-db');
+  console.log('   3. สร้าง D1 database: wrangler d1 create knkpart-db');
   console.log('   4. ใส่ database_id ใน wrangler.toml');
   console.log('   5. รัน migration: npm run db:local (หรือ db:remote)');
   process.exit(1);

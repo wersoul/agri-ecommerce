@@ -15,7 +15,7 @@
 //   GMAIL_CLIENT_SECRET = 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
 //
 // หลังได้ refresh_token ตั้ง Cloudflare secret:
-//   wrangler pages secret put GMAIL_REFRESH_TOKEN --project-name=agri-ecommerce
+//   wrangler pages secret put GMAIL_REFRESH_TOKEN --project-name=knkpart
 
 const http = require("http");
 const { URL } = require("url");
@@ -109,12 +109,12 @@ async function main() {
   console.log("─".repeat(60));
   log(`\n📋 ขั้นตอนถัดไป:`);
   log(`1. รันคำสั่งนี้ใน terminal:`);
-  log(`   wrangler pages secret put GMAIL_REFRESH_TOKEN --project-name=agri-ecommerce`);
+  log(`   wrangler pages secret put GMAIL_REFRESH_TOKEN --project-name=knkpart`);
   log(`2. paste refresh_token ด้านบน`);
   log(`3. รันอีกคำสั่งเพื่อตั้งค่า provider:`);
-  log(`   wrangler pages secret put EMAIL_PROVIDER --project-name=agri-ecommerce   # ตอบ gmail`);
-  log(`   wrangler pages secret put EMAIL_FROM --project-name=agri-ecommerce     # ตอบ "KNK Part <ping105@gmail.com>"`);
-  log(`4. redeploy แล้วทดสอบ: curl -X POST https://agri-ecommerce.pages.dev/api/admin/test-email -d '{"to":"knkpart@gmail.com"}' -H 'Content-Type: application/json'\n`);
+  log(`   wrangler pages secret put EMAIL_PROVIDER --project-name=knkpart   # ตอบ gmail`);
+  log(`   wrangler pages secret put EMAIL_FROM --project-name=knkpart     # ตอบ "KNK Part <ping105@gmail.com>"`);
+  log(`4. redeploy แล้วทดสอบ: curl -X POST https://knkpart.pages.dev/api/admin/test-email -d '{"to":"knkpart@gmail.com"}' -H 'Content-Type: application/json'\n`);
 }
 
 const { execSync } = require("child_process");
@@ -126,7 +126,7 @@ function err(msg) { console.log(`\x1b[31m❌\x1b[0m ${msg}`); }
 
 const SCRIPT_DIR = __dirname;
 const TOKEN_FILE = path.join(SCRIPT_DIR, ".gmail-refresh-token");
-const PROJECT_NAME = "agri-ecommerce";
+const PROJECT_NAME = "knkpart";
 
 function setSecret(secretName, value) {
   try {
@@ -235,7 +235,7 @@ async function main() {
     ok("\n🎉 ตั้ง secrets ครบ 5 ตัวแล้ว!");
     log("\n📋 ขั้นตอนถัดไป:");
     log("   redeploy แล้วทดสอบ:");
-    log('   curl -X POST https://agri-ecommerce.pages.dev/api/admin/test-email \\');
+    log('   curl -X POST https://knkpart.pages.dev/api/admin/test-email \\');
     log('        -H "Content-Type: application/json" \\');
     log('        -d \'{"to":"knkpart@gmail.com"}\'');
   } else {
