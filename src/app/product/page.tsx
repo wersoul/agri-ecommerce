@@ -8,27 +8,45 @@ import { addToCart } from "@/lib/cart";
 export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
     const qs = new URLSearchParams(window.location.search);
     const id = parseInt(qs.get("id") || "0");
-    if (!id) {
+    if (!id || Number.isNaN(id)) {
       setLoading(false);
+      setError("ไม่ระบุรหัสสินค้า");
+      setProduct(null);
       return;
     }
-    fetch(`/api/products/${id}`)
+    setProduct(null);
+    setLoading(true);
+    setError(null);
+    fetch(`/api/products/${id}`, { cache: "no-store" })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       })
       .then((d) => {
-        setProduct(d.product ?? null);
+        if (!d.product) {
+          setError(`ไม่พบสินค้า id=${id}`);
+          setProduct(null);
+        } else {
+          // Safety: ensure returned id matches requested id
+          if (d.product.id !== id) {
+            setError(`รหัสสินค้าไม่ตรงกัน (คาด ${id}, ได้ ${d.product.id})`);
+            setProduct(null);
+            return;
+          }
+          setProduct(d.product);
+        }
         setLoading(false);
       })
       .catch((e) => {
         console.error("Failed to load product", e);
+        setError(String(e?.message || e));
         setProduct(null);
         setLoading(false);
       });
@@ -56,6 +74,7 @@ export default function ProductDetailPage() {
     return (
       <div className="container mx-auto px-4 py-8 text-center">
         <h2 className="text-2xl font-bold mb-4">ไม่พบสินค้า</h2>
+        {error && <p className="text-red-600 mb-4 text-sm">{error}</p>}
         <Link href="/products" className="text-primary-600 hover:underline">
           ← กลับไปหน้าสินค้า
         </Link>
@@ -78,7 +97,7 @@ export default function ProductDetailPage() {
             {" / "}
           </>
         )}
-        <span className="text-gray-800">{product.name}</span>
+        <span className="text-gray-800">{product.name} #{product.id}</span>
       </nav>
 
       <div className="grid md:grid-cols-2 gap-8 bg-white rounded-lg shadow p-6">

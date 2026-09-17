@@ -29,6 +29,7 @@ export default function ProductTable({ products, loading, onEdit, onDelete }: Pr
       <table className="w-full">
         <thead className="bg-gray-50">
           <tr>
+            <th className="text-left p-3">ID</th>
             <th className="text-left p-3">สินค้า</th>
             <th className="text-left p-3">หมวดหมู่</th>
             <th className="text-right p-3">ราคา</th>
@@ -40,6 +41,18 @@ export default function ProductTable({ products, loading, onEdit, onDelete }: Pr
         <tbody>
           {products.map((p) => (
             <tr key={p.id} className="border-t hover:bg-gray-50">
+              <td className="p-3 text-sm">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard?.writeText(String(p.id));
+                  }}
+                  title="คลิกเพื่อคัดลอก ID"
+                  className="font-mono text-gray-600 hover:text-primary-600 hover:underline"
+                >
+                  #{p.id}
+                </button>
+              </td>
               <td className="p-3">
                 <div className="flex items-center gap-3">
                   {p.image_url && (
