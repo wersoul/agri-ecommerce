@@ -1,0 +1,10 @@
+name = "agri-ecommerce"
+compatibility_date = "2024-07-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "agri-ecommerce-db"
+database_id = "c8cad5c0-2b51-4cbd-b5b5-18d6485d392f"  # APAC region

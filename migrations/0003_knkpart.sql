@@ -1,0 +1,116 @@
+-- =========================================
+-- KNK Part Migration: 12 categories + products
+-- =========================================
+
+INSERT OR IGNORE INTO categories (name, slug, description, image_url) VALUES
+('คอนเดนเซอร์', 'condensor', 'คอนเดนเซอร์สตาร์ทเครื่องยนต์ ทุกขนาด ทุกยี่ห้อ Pronto Hitachi', '/images/knkpart/slides/slide1.jpg'),
+('ซีลปั๊มน้ำ', 'pump-seal', 'ซีลปั๊มน้ำ ยางกันน้ำมัน ทุกขนาด cm คาปิต้า มิสซู', '/images/knkpart/slides/slide2.jpg'),
+('อะไหล่ตัดหญ้า', 'grass-cutter-parts', 'อะไหล่เครื่องตัดหญ้า NB411 CG328 GX35 G4K T200 TD40 คอยส์ คาร์บู', '/images/knkpart/slides/slide3.jpg'),
+('อะไหล่ปั๊มชัก', 'pump-parts', 'ชุดสปริงปั๊มชัก ยางลูกสูบ ลิ้นยาง ลูกสูบหนังโยก', '/images/knkpart/banners/sprayer_1920x1080.jpg'),
+('อะไหล่พ่นยา', 'sprayer-parts', 'อะไหล่เครื่องพ่นยา 767 ปั๊มสามสูบ แบตเตอรี่พ่นยา', '/images/knkpart/banners/15-PP-INT-Main-Banner.jpg'),
+('อะไหล่เครื่องเลื่อย', 'chainsaw-parts', 'อะไหล่เลื่อยยนต์ MS070 MS180 MS381 3800 5200 1700', '/images/knkpart/banners/used-challenger-tractor.jpg'),
+('อะไหล่เครื่องแรง', 'engine-parts', 'อะไหล่เครื่องยนต์ดีเซล GX120 GX160 G200 G300 G400 ก๊อกน้ำมัน', '/images/knkpart/banners/Tractor_in_field-Fotolia_22386036_Subscription_Monthly_XL.jpg'),
+('อะไหล่เครื่องพ่นลมหว่านปุ๋ย', 'blower-spreader-parts', 'อะไหล่เครื่องพ่นลมหว่านปุ๋ย G5K 3WF F30', '/images/knkpart/banners/bigstock-The-Tractor-Modern-Farm-Equi-44692394.jpg'),
+('อะไหล่รถไถเดินตาม', 'walking-tractor-parts', 'อะไหล่รถไถเดินตาม ฝาสูบ ประเก็น มู่เล่ย์ กรองปากถัง', '/images/knkpart/slides/slide1.jpg'),
+('เพรสเชอร์สวิทช์', 'pressure-switch', 'เพรสเชอร์สวิทช์ ออโต้กลม ปั๊มเจท ปั๊มลม', '/images/knkpart/slides/slide2.jpg'),
+('โอเวอร์โหลดสวิทช์', 'overload-switch', 'โอเวอร์โหลดสวิทช์ ป้องกันมอเตอร์ไหม้', '/images/knkpart/slides/slide3.jpg'),
+('อะไหล่อื่นๆ', 'other-parts', 'อะไหล่อื่นๆ สายสะพาย ฝาครอบ ถ้วยรอง มือเร่ง บล็อกหัวเทียน', '/images/knkpart/banners/sprayer_1920x1080.jpg');
+
+INSERT OR IGNORE INTO products (name, slug, description, price, stock, sku, image_url, category_id, is_active) VALUES
+-- อะไหล่ปั๊มชัก (id=10)
+('ชุดสปริงปั๊มชัก', 'knk-spring-pump', 'ชุดสปริงปั๊มชัก สปริงเหล็กคุณภาพ', 280, 40, 'KNK-SPP', '/images/knkpart/products/ชุดสปริงปั๊มชัก.jpg', 10, 1),
+('ยางลูกสูบปั๊มชัก', 'knk-piston-rubber', 'ยางลูกสูบปั๊มชัก ยาง NBR ทนน้ำมัน', 90, 100, 'KNK-YLSP', '/images/knkpart/products/ยางลูกสูบปั๊มชัก.jpg', 10, 1),
+('ลิ้นยางปั๊มชัก', 'knk-valve-rubber', 'ลิ้นยางปั๊มชัก', 70, 120, 'KNK-LYRP', '/images/knkpart/products/ลิ้นยางปั๊มชัก.jpg', 10, 1),
+('ลูกสูบหนังโยก', 'knk-leather-piston', 'ลูกสูบหนังโยก', 120, 80, 'KNK-LSP', '/images/knkpart/products/ลูกสูบหนังโยก.jpg', 10, 1),
+-- อะไหล่รถไถเดินตาม (id=15)
+('ก๊อกถ่ายน้ำ', 'knk-draincock', 'ก๊อกถ่ายน้ำ สำหรับรถไถเดินตาม', 90, 100, 'KNK-DC', '/images/knkpart/products/ก็อกถ่ายน้ำ.jpg', 15, 1),
+('ตลับเร่ง PVC ดำแดง', 'knk-accelerator', 'ตลับเร่ง PVC ดำแดง', 130, 70, 'KNK-ACC', '/images/knkpart/products/ตลับเร่ง PVC ดำแดง.jpg', 15, 1),
+('โอลิงชุด D1000', 'knk-oiling-d1000', 'โอลิงชุด D1000', 280, 30, 'KNK-OIL', '/images/knkpart/products/โอลิงชุด D1000.jpg', 15, 1),
+-- เพรสเชอร์สวิทช์ (id=16)
+('เพรสเชอร์สวิทช์ ออโต้กลม', 'knk-ps-auto-round', 'เพรสเชอร์สวิทช์ ออโต้กลม', 380, 30, 'KNK-PSAR', '/images/knkpart/products/1.เพรสเชอร์สวิทช์ ออโต้กลม.jpg', 16, 1),
+('เพรสเชอร์สวิทช์ เกลียวนอก', 'knk-ps-auto-thread', 'เพรสเชอร์สวิทช์ ออโต้กลม เกลียวนอก', 420, 25, 'KNK-PSAT', '/images/knkpart/products/2.เพรสเซอร์ ออโต้กลม เกลียวนอก.jpg', 16, 1),
+('เพรสเชอร์สวิทช์ ปั๊มเจท-1', 'knk-ps-jet1', 'เพรสเชอร์สวิทช์ ปั๊มเจท-1', 460, 20, 'KNK-PSJ1', '/images/knkpart/products/3.เพรสเซอร์สวิทช์ ปั๊มเจท-1.jpg', 16, 1),
+('เพรสเชอร์สวิทช์ปั๊มลม', 'knk-ps-airpump', 'เพรสเชอร์สวิทช์ปั๊มลม', 440, 22, 'KNK-PSAP', '/images/knkpart/products/4.เพรสเชอร์สวิทช์ปั๊มลม.jpg', 16, 1),
+('เพรสเชอร์สวิทช์ รวมๆ', 'knk-ps-mix', 'เพรสเชอร์สวิทช์ รวมๆ', 380, 30, 'KNK-PSM', '/images/knkpart/products/5.เพรสเชอร์สวิทช์ รวมๆ.jpg', 16, 1),
+-- โอเวอร์โหลดสวิทช์ (id=17)
+('โอเวอร์โหลดสวิทช์', 'knk-ol-switch', 'โอเวอร์โหลดสวิทช์ ป้องกันมอเตอร์ไหม้', 320, 40, 'KNK-OL1', '/images/knkpart/products/โอเวอร์โหลด-1.jpg', 17, 1),
+-- คอนเดนเซอร์ (id=7)
+('คอนเดนเซอร์ Pronto 450V 20MF', 'knk-cspt-450v20mf', 'คอนเดนเซอร์ Pronto มีสาย 450V 20MF', 180, 50, 'KNK-CSPT20', '/images/knkpart/banners/15-PP-INT-Main-Banner.jpg', 7, 1),
+('คอนเดนเซอร์ 450V 6MF เหลี่ยม', 'knk-csbox-450v6mf', 'คอนเดนเซอร์ 450V 6MF เหลี่ยม มีสาย', 120, 60, 'KNK-CSBOX6', '/images/knkpart/banners/15-PP-INT-Main-Banner.jpg', 7, 1),
+('คอนเดนเซอร์ Pronto เสียบ 450V 60MF', 'knk-cspti-450v60mf', 'คอนเดนเซอร์ Pronto เสียบ 450V 60MF', 280, 40, 'KNK-CSPTI60', '/images/knkpart/banners/15-PP-INT-Main-Banner.jpg', 7, 1),
+('คอนเดนเซอร์กลมดำ 350V 25MF', 'knk-csbl-350v25mf', 'คอนเดนเซอร์กลมดำ 350V 25MF', 200, 45, 'KNK-CSBL25', '/images/knkpart/banners/15-PP-INT-Main-Banner.jpg', 7, 1),
+('คอนเดนเซอร์สตาร์ท 125V 125MF', 'knk-csst-125v125mf', 'คอนเดนเซอร์สตาร์ท 125V 125MF', 350, 30, 'KNK-CSST125', '/images/knkpart/banners/15-PP-INT-Main-Banner.jpg', 7, 1),
+('คอนเดนเซอร์ Hitachi 220V 40MF', 'knk-cshc-220v40mf', 'คอนเดนเซอร์ Hitachi 220V 40MF', 250, 35, 'KNK-CSHC40', '/images/knkpart/banners/15-PP-INT-Main-Banner.jpg', 7, 1),
+('คอนเดนเซอร์ 220V 180MF', 'knk-cs-220v180mf', 'คอนเดนเซอร์ 220V 180MF', 450, 25, 'KNK-CS180', '/images/knkpart/banners/15-PP-INT-Main-Banner.jpg', 7, 1),
+-- ซีลปั๊มน้ำ (id=8)
+('ซีลปั๊มน้ำ 560A 16-30cm', 'knk-seal-560a1630', 'ซีลปั๊มน้ำ 560A 16-30cm', 85, 100, 'KNK-560A1630', '/images/knkpart/slides/slide2.jpg', 8, 1),
+('ซีลปั๊มน้ำ 560A 16-32cm', 'knk-seal-560a1632', 'ซีลปั๊มน้ำ 560A 16-32cm', 90, 100, 'KNK-560A1632', '/images/knkpart/slides/slide2.jpg', 8, 1),
+('ซีลปั๊มน้ำ CM103 12-26cm', 'knk-seal-cm1031226', 'ซีลปั๊มน้ำ CM103 12-26cm', 75, 120, 'KNK-CM1031226', '/images/knkpart/slides/slide2.jpg', 8, 1),
+('ซีลปั๊มน้ำ CM108 22-37cm', 'knk-seal-cm1082237', 'ซีลปั๊มน้ำ CM108 22-37cm', 110, 70, 'KNK-CM1082237', '/images/knkpart/slides/slide2.jpg', 8, 1),
+('ซีลปั๊มน้ำ CM108 30-45cm', 'knk-seal-cm1083045', 'ซีลปั๊มน้ำ CM108 30-45cm', 130, 60, 'KNK-CM1083045', '/images/knkpart/slides/slide2.jpg', 8, 1),
+('ซีลปั๊มน้ำคาปิต้า 20-35cm', 'knk-seal-kp2035', 'ซีลปั๊มน้ำคาปิต้า 20-35cm', 100, 90, 'KNK-KP2035', '/images/knkpart/slides/slide2.jpg', 8, 1),
+('ซีลปั๊มน้ำมิสซู 205P', 'knk-seal-mistu205', 'ซีลปั๊มน้ำมิสซู 205P', 120, 50, 'KNK-MISTU205', '/images/knkpart/slides/slide2.jpg', 8, 1),
+('ซีลปั๊มน้ำ M155N', 'knk-seal-m155n', 'ซีลปั๊มน้ำ M155N', 140, 40, 'KNK-M155N', '/images/knkpart/slides/slide2.jpg', 8, 1),
+-- อะไหล่ตัดหญ้า (id=9)
+('NB411 กระเดื่องสตาร์ท ขาว', 'knk-nb411-white', 'NB411 กระเดื่องสตาร์ท ขาว', 220, 50, 'KNK-NB411W', '/images/knkpart/slides/slide3.jpg', 9, 1),
+('NB411 กระเดื่องสตาร์ท ดำ', 'knk-nb411-black', 'NB411 กระเดื่องสตาร์ท ดำ', 220, 50, 'KNK-NB411B', '/images/knkpart/slides/slide3.jpg', 9, 1),
+('GX35 กระเดื่องวาล์วครบชุด', 'knk-gx35-valve', 'GX35 กระเดื่องวาล์วครบชุด', 180, 60, 'KNK-GX35V', '/images/knkpart/slides/slide3.jpg', 9, 1),
+('GX160 ชุดกรองใต้ถัง PVC', 'knk-gx160-pvc', 'GX160 ชุดกรองใต้ถัง PVC', 150, 80, 'KNK-GX160PVC', '/images/knkpart/slides/slide3.jpg', 9, 1),
+('CG328 ก๊อกน้ำมัน หน้าแปลนใหญ่', 'knk-cg328-oilcock', 'CG328 ก๊อกน้ำมัน หน้าแปลนใหญ่', 160, 70, 'KNK-CG328O', '/images/knkpart/slides/slide3.jpg', 9, 1),
+('CG328 ก้านสูบ', 'knk-cg328-pole', 'CG328 ก้านสูบ', 240, 40, 'KNK-CG328P', '/images/knkpart/slides/slide3.jpg', 9, 1),
+('GX35 ก้านสูบ', 'knk-gx35-pole', 'GX35 ก้านสูบ', 240, 40, 'KNK-GX35P', '/images/knkpart/slides/slide3.jpg', 9, 1),
+('NB411 ก้านสูบ', 'knk-nb411-pole', 'NB411 ก้านสูบ', 240, 40, 'KNK-NB411P', '/images/knkpart/slides/slide3.jpg', 9, 1),
+('NB411 คอยส์', 'knk-nb411-coil', 'NB411 คอยส์ CDI', 280, 50, 'KNK-NB411C', '/images/knkpart/slides/slide3.jpg', 9, 1),
+('NB411 คาร์บูเรเตอร์', 'knk-nb411-carb', 'NB411 คาร์บูเรเตอร์', 350, 30, 'KNK-NB411CR', '/images/knkpart/slides/slide3.jpg', 9, 1),
+('GX35 คาร์บูเรเตอร์', 'knk-gx35-carb', 'GX35 คาร์บูเรเตอร์', 350, 30, 'KNK-GX35CR', '/images/knkpart/slides/slide3.jpg', 9, 1),
+-- อะไหล่พ่นยา (id=11)
+('อะไหล่พ่นยา 767', 'knk-sprayer-767', 'อะไหล่พ่นยารุ่น 767', 450, 30, 'KNK-S767', '/images/knkpart/banners/sprayer_1920x1080.jpg', 11, 1),
+('ปั๊มสามสูบ', 'knk-3pump', 'ปั๊มสามสูบ สำหรับเครื่องพ่นยา', 680, 25, 'KNK-3P', '/images/knkpart/banners/sprayer_1920x1080.jpg', 11, 1),
+('แบตเตอรี่พ่นยา 16 ลิตร', 'knk-batt-16l', 'แบตเตอรี่พ่นยา 16 ลิตร', 890, 20, 'KNK-B16', '/images/knkpart/banners/sprayer_1920x1080.jpg', 11, 1),
+('แบตเตอรี่พ่นยา 20 ลิตร', 'knk-batt-20l', 'แบตเตอรี่พ่นยา 20 ลิตร', 1100, 15, 'KNK-B20', '/images/knkpart/banners/sprayer_1920x1080.jpg', 11, 1),
+('แบตเตอรี่พ่นยา 25 ลิตร', 'knk-batt-25l', 'แบตเตอรี่พ่นยา 25 ลิตร', 1380, 12, 'KNK-B25', '/images/knkpart/banners/sprayer_1920x1080.jpg', 11, 1),
+('มอเตอร์ปั๊มน้ำ 767', 'knk-motor-767', 'มอเตอร์ปั๊มน้ำ 767', 1850, 8, 'KNK-M767', '/images/knkpart/banners/sprayer_1920x1080.jpg', 11, 1),
+-- อะไหล่เครื่องเลื่อย (id=12)
+('อะไหล่เลื่อย 3800', 'knk-cs-3800', 'อะไหล่เลื่อย 3800 ครบชุด', 1450, 15, 'KNK-CS3800', '/images/knkpart/banners/used-challenger-tractor.jpg', 12, 1),
+('อะไหล่เลื่อย 5200', 'knk-cs-5200', 'อะไหล่เลื่อย 5200 ครบชุด', 1680, 12, 'KNK-CS5200', '/images/knkpart/banners/used-challenger-tractor.jpg', 12, 1),
+('อะไหล่เลื่อย MS070', 'knk-cs-ms070', 'อะไหล่เลื่อย MS070', 1850, 10, 'KNK-CSMS070', '/images/knkpart/banners/used-challenger-tractor.jpg', 12, 1),
+('อะไหล่เลื่อย MS180', 'knk-cs-ms180', 'อะไหล่เลื่อย MS180', 1950, 10, 'KNK-CSMS180', '/images/knkpart/banners/used-challenger-tractor.jpg', 12, 1),
+('อะไหล่เลื่อย MS381', 'knk-cs-ms381', 'อะไหล่เลื่อย MS381', 2100, 8, 'KNK-CSMS381', '/images/knkpart/banners/used-challenger-tractor.jpg', 12, 1),
+('อะไหล่เลื่อย 1700', 'knk-cs-1700', 'อะไหล่เลื่อย 1700', 1380, 12, 'KNK-CS1700', '/images/knkpart/banners/used-challenger-tractor.jpg', 12, 1),
+-- อะไหล่เครื่องแรง (id=13)
+('G150 ลูกลอยคาร์บู', 'knk-g150-float', 'G150=G200 ลูกลอยคาร์บู', 180, 50, 'KNK-G150F', '/images/knkpart/banners/Tractor_in_field-Fotolia_22386036_Subscription_Monthly_XL.jpg', 13, 1),
+('G150-200 หม้อกรองอากาศ', 'knk-g150-airfilter', 'G150-200 หม้อกรองอากาศ', 220, 60, 'KNK-G150AF', '/images/knkpart/banners/Tractor_in_field-Fotolia_22386036_Subscription_Monthly_XL.jpg', 13, 1),
+('G200 ก๊อกน้ำมัน', 'knk-g200-oilcock1', 'G200 ก๊อกน้ำมัน 3.3X4X8 CM', 160, 70, 'KNK-G200O1', '/images/knkpart/banners/Tractor_in_field-Fotolia_22386036_Subscription_Monthly_XL.jpg', 13, 1),
+('G200 ยางก๊อกน้ำมัน', 'knk-g200-cockrubber', 'G200 ยางก๊อกน้ำมัน', 50, 200, 'KNK-G200CR', '/images/knkpart/banners/Tractor_in_field-Fotolia_22386036_Subscription_Monthly_XL.jpg', 13, 1),
+('G200 ไส้กรองอากาศ', 'knk-g200-airfilter2', 'G200 ไส้กรองอากาศ', 130, 80, 'KNK-G200AF2', '/images/knkpart/banners/Tractor_in_field-Fotolia_22386036_Subscription_Monthly_XL.jpg', 13, 1),
+('GX160 030', 'knk-gx160-030', 'GX160 030', 1900, 10, 'KNK-GX160030', '/images/knkpart/banners/Tractor_in_field-Fotolia_22386036_Subscription_Monthly_XL.jpg', 13, 1),
+('GX110-120 STD', 'knk-gx110-120', 'GX110-120 STD', 2100, 8, 'KNK-GX110-120', '/images/knkpart/banners/Tractor_in_field-Fotolia_22386036_Subscription_Monthly_XL.jpg', 13, 1),
+('GX120', 'knk-gx120', 'GX120', 2200, 8, 'KNK-GX120', '/images/knkpart/banners/Tractor_in_field-Fotolia_22386036_Subscription_Monthly_XL.jpg', 13, 1),
+-- อะไหล่เครื่องพ่นลมหว่านปุ๋ย (id=14)
+('G5K อะไหล่พ่นลม', 'knk-g5k', 'G5K อะไหล่เครื่องพ่นลมหว่านปุ๋ย', 1450, 15, 'KNK-G5K', '/images/knkpart/banners/bigstock-The-Tractor-Modern-Farm-Equi-44692394.jpg', 14, 1),
+('3WF อะไหล่พ่นลม', 'knk-3wf', '3WF อะไหล่เครื่องพ่นลมหว่านปุ๋ย', 1680, 12, 'KNK-3WF', '/images/knkpart/banners/bigstock-The-Tractor-Modern-Farm-Equi-44692394.jpg', 14, 1),
+('F30 อะไหล่พ่นลม', 'knk-f30', 'F30 อะไหล่เครื่องพ่นลมหว่านปุ๋ย', 1380, 18, 'KNK-F30', '/images/knkpart/banners/bigstock-The-Tractor-Modern-Farm-Equi-44692394.jpg', 14, 1),
+-- อะไหล่รถไถเดินตาม (id=15) เพิ่ม
+('ET ที่ล็อคมือหมุน', 'knk-et-lock', 'ET TF ที่ล็อคมือหมุน', 180, 50, 'KNK-ET-LOCK', '/images/knkpart/slides/slide1.jpg', 15, 1),
+('ET กรองปากถังน้ำมัน', 'knk-et-tankfilter', 'ET กรองปากถังน้ำมัน', 90, 80, 'KNK-ETF', '/images/knkpart/slides/slide1.jpg', 15, 1),
+('ET ขายึดไฟหน้า', 'knk-et-lightholder', 'ET ขายึดไฟหน้า', 220, 30, 'KNK-ETLH', '/images/knkpart/slides/slide1.jpg', 15, 1),
+('ET ยางกันสะเทือน', 'knk-et-rubber-big', 'ET ยางกันสะเทือน ตัวกลมใหญ่', 110, 60, 'KNK-ETRB', '/images/knkpart/slides/slide1.jpg', 15, 1),
+('ET สายแป๊บหัวฉีด', 'knk-et-pipe', 'ET สายแป๊บหัวฉีด', 150, 50, 'KNK-ETP', '/images/knkpart/slides/slide1.jpg', 15, 1),
+('ET แหวนทองแดง', 'knk-et-copperring', 'ET แหวนทองแดง', 50, 200, 'KNK-ETCR', '/images/knkpart/slides/slide1.jpg', 15, 1),
+('NC131 แผ่นครัช', 'knk-nc131-clutch', 'NC131 แผ่นครัช', 320, 20, 'KNK-NC131C', '/images/knkpart/slides/slide1.jpg', 15, 1),
+('ประเก็นชุด', 'knk-gasket-set', 'ประเก็นชุด', 180, 50, 'KNK-GS', '/images/knkpart/slides/slide1.jpg', 15, 1),
+('ประเก็นฝาสูบ', 'knk-headgasket', 'ประเก็นฝาสูบ', 80, 100, 'KNK-HG', '/images/knkpart/slides/slide1.jpg', 15, 1),
+('มู่เล่ย์พัดลม', 'knk-fanpulley', 'มู่เล่ย์พัดลม', 220, 40, 'KNK-FP', '/images/knkpart/slides/slide1.jpg', 15, 1),
+-- อะไหล่อื่นๆ (id=18)
+('สายสะพาย', 'knk-strap', 'สายสะพายเครื่องตัดหญ้า', 90, 100, 'KNK-STRAP', '/images/knkpart/banners/sprayer_1920x1080.jpg', 18, 1),
+('ปะกับแฮนด์', 'knk-handle', 'ปะกับแฮนด์', 110, 80, 'KNK-HDL', '/images/knkpart/banners/sprayer_1920x1080.jpg', 18, 1),
+('ถ้วยรองใบมีด', 'knk-bladecup', 'ถ้วยรองใบมีด', 70, 120, 'KNK-BC', '/images/knkpart/banners/sprayer_1920x1080.jpg', 18, 1),
+('ฝาครอบบน', 'knk-cover-top', 'ฝาครอบบน', 150, 60, 'KNK-CT', '/images/knkpart/banners/sprayer_1920x1080.jpg', 18, 1),
+('เชือกกระตุก', 'knk-pullrope', 'เชือกกระตุก สตาร์ทเครื่องยนต์', 50, 200, 'KNK-PR', '/images/knkpart/banners/sprayer_1920x1080.jpg', 18, 1),
+('ด้ามพ่นยา', 'knk-sprayhandle', 'ด้ามพ่นยา', 180, 70, 'KNK-SH', '/images/knkpart/banners/sprayer_1920x1080.jpg', 18, 1),
+('หัวเทียน', 'knk-sparkplug', 'หัวเทียน', 80, 200, 'KNK-SP', '/images/knkpart/banners/sprayer_1920x1080.jpg', 18, 1),
+('เอ็นตัดหญ้า', 'knk-string', 'เอ็นตัดหญ้า', 90, 250, 'KNK-STG', '/images/knkpart/banners/sprayer_1920x1080.jpg', 18, 1),
+('ใบมีดตัดหญ้า', 'knk-blade', 'ใบมีดตัดหญ้า', 130, 100, 'KNK-BLD', '/images/knkpart/banners/sprayer_1920x1080.jpg', 18, 1),
+('มือเร่ง', 'knk-throttle', 'มือเร่ง', 140, 80, 'KNK-TH', '/images/knkpart/banners/sprayer_1920x1080.jpg', 18, 1),
+('มือเร่งสวิทช์', 'knk-throttleswitch', 'มือเร่งสวิทช์', 180, 70, 'KNK-TSW', '/images/knkpart/banners/sprayer_1920x1080.jpg', 18, 1),
+('บล็อกหัวเทียน', 'knk-plugsocket', 'บล็อกหัวเทียน', 60, 150, 'KNK-PSO', '/images/knkpart/banners/sprayer_1920x1080.jpg', 18, 1);

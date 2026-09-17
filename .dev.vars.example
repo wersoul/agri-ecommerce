@@ -1,0 +1,2 @@
+# Copy to .dev.vars and fill in
+JWT_SECRET="your-secret-key-change-this-in-production"
