@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Category, Subcategory } from "@/lib/types";
+import ImageUploadField from "@/components/ImageUploadField";
 
 interface ProductFormProps {
   form: any;
@@ -147,16 +148,11 @@ export default function ProductForm({
           </div>
         )}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-1">URL รูปภาพ</label>
-          <input
-            value={form.image_url}
-            onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-            className="input-field"
-            placeholder="https://..."
+          <ImageUploadField
+            label="รูปภาพสินค้า"
+            value={form.image_url || ""}
+            onChange={(url) => setForm({ ...form, image_url: url })}
           />
-          <p className="text-xs text-gray-500 mt-1">
-            ใช้ URL จาก Cloudflare R2 หรือ CDN อื่น (รองรับเฉพาะ HTTPS)
-          </p>
         </div>
         <div className="md:col-span-2">
           <label className="flex items-center gap-2">

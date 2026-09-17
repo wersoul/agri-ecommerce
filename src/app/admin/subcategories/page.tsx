@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Subcategory, Category } from "@/lib/types";
+import ImageUploadField from "@/components/ImageUploadField";
 
 export default function AdminSubcategoriesPage() {
   const router = useRouter();
@@ -156,8 +157,11 @@ export default function AdminSubcategoriesPage() {
               <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="input-field" rows={2} />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-1">URL รูปภาพ</label>
-              <input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} className="input-field" placeholder="https://..." />
+              <ImageUploadField
+                label="รูปภาพประเภทย่อย"
+                value={form.image_url || ""}
+                onChange={(url) => setForm({ ...form, image_url: url })}
+              />
             </div>
             <div className="md:col-span-2 flex gap-2">
               <button type="submit" className="btn-primary">{editing ? "บันทึก" : "เพิ่ม"}</button>

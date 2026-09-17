@@ -35,21 +35,56 @@ export default function BulkUploadPage() {
 
   function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
+    // Each file is uploaded immediately by BulkRowItem when selected.
+    // We only seed rows here — no preview blob URL anymore (preview comes
+    // from the uploaded R2 URL once each item finishes uploading).
     const newRows: BulkRow[] = Array.from(files)
       .filter((f) => f.type.startsWith("image/"))
       .map((f) => ({
         id: Math.random().toString(36).slice(2),
         name: nameFromFilename(f.name),
         image_url: "",
-        image_file: f,
-        image_preview: URL.createObjectURL(f),
+        image_preview: "",
+        uploading: true,
+        upload_error: null,
         category_id: defaultCategory,
         subcategory_id: 0,
         price: "",
         stock: "",
         description: "",
-      }));
+        _pendingFile: f,
+      })) as any;
     setRows((prev) => [...prev, ...newRows]);
+    // Trigger upload for each new row via a synthetic event
+    // (BulkRowItem picks up via file input change triggered separately).
+    // We use a small trick: simulate a click by setting image_url via
+    // direct upload here, so users see progress without extra clicks.
+    newRows.forEach(async (r: any) => {
+      if (!r._pendingFile) return;
+      try {
+        const fd = new FormData();
+        fd.append("file", r._pendingFile);
+        const token = localStorage.getItem("admin_token");
+        const res = await fetch("/api/admin/upload/", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: fd,
+        });
+        const data = await res.json();
+        if (!res.ok || !data.url) throw new Error(data.error || "อัปโหลดไม่สำเร็จ");
+        setRows((prev) => prev.map((row) =>
+          row.id === r.id
+            ? { ...row, image_url: data.url, image_preview: data.url, uploading: false, upload_error: null }
+            : row
+        ));
+      } catch (e: any) {
+        setRows((prev) => prev.map((row) =>
+          row.id === r.id
+            ? { ...row, uploading: false, upload_error: e.message || "อัปโหลดไม่สำเร็จ" }
+            : row
+        ));
+      }
+    });
   }
 
   function handleUrlPaste() {
@@ -62,8 +97,9 @@ export default function BulkUploadPage() {
         id: Math.random().toString(36).slice(2),
         name: nameFromFilename(fn),
         image_url: url,
-        image_file: null,
         image_preview: url,
+        uploading: false,
+        upload_error: null,
         category_id: defaultCategory,
         subcategory_id: 0,
         price: "",
@@ -79,11 +115,7 @@ export default function BulkUploadPage() {
   }
 
   function removeRow(id: string) {
-    setRows((prev) => {
-      const target = prev.find((r) => r.id === id);
-      if (target?.image_preview?.startsWith("blob:")) URL.revokeObjectURL(target.image_preview);
-      return prev.filter((r) => r.id !== id);
-    });
+    setRows((prev) => prev.filter((r) => r.id !== id));
   }
 
   function applyDefaultToAll(field: "category_id" | "subcategory_id", value: number) {
@@ -96,21 +128,11 @@ export default function BulkUploadPage() {
     setRows((prev) => prev.map((r) => ({ ...r, name: n, slug: slugify(n) })));
   }
 
-  async function uploadOne(row: BulkRow): Promise<string> {
-    if (row.image_url) return row.image_url;
-    if (!row.image_file) throw new Error("no image");
-    const fd = new FormData();
-    fd.append("file", row.image_file);
-    const token = localStorage.getItem("admin_token");
-    const r = await fetch("/api/admin/upload/", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd });
-    const data = await r.json();
-    if (!r.ok || !data.url) throw new Error(data.error || "upload failed");
-    return data.url;
-  }
-
   async function handleSubmit() {
     if (rows.length === 0) { alert("ไม่มีสินค้า"); return; }
     if (!localStorage.getItem("admin_token")) { alert("กรุณาเข้าสู่ระบบใหม่"); router.push("/admin/login"); return; }
+    if (rows.some((r) => r.uploading)) { alert("กรุณารอให้อัปโหลดรูปให้เสร็จก่อน"); return; }
+
     setSubmitting(true);
     setResult(null);
     console.log(`[BulkUpload] เริ่มบันทึก ${rows.length} รายการ`);
@@ -120,25 +142,20 @@ export default function BulkUploadPage() {
       for (let i = 0; i < rows.length; i++) {
         const r = rows[i];
         if (!r.name.trim()) { errors.push(`#${i + 1}: ไม่มีชื่อ`); continue; }
-        try {
-          const image_url = await uploadOne(r);
-          items.push({
-            name: r.name.trim(),
-            slug: slugify(r.name),
-            description: r.description,
-            price: r.price === "" ? 0 : parseFloat(r.price),
-            stock: r.stock === "" ? 0 : parseInt(r.stock),
-            image_url,
-            category_id: r.category_id || undefined,
-            subcategory_id: r.subcategory_id || undefined,
-            is_active: 1,
-          });
-        } catch (e: any) {
-          console.error(`[BulkUpload] upload #${i + 1} (${r.name}) failed:`, e);
-          errors.push(`#${i + 1} (${r.name}): ${e.message}`);
-        }
+        if (!r.image_url) { errors.push(`#${i + 1} (${r.name}): ยังไม่มีรูปภาพ`); continue; }
+        items.push({
+          name: r.name.trim(),
+          slug: slugify(r.name),
+          description: r.description,
+          price: r.price === "" ? 0 : parseFloat(r.price),
+          stock: r.stock === "" ? 0 : parseInt(r.stock),
+          image_url: r.image_url,
+          category_id: r.category_id || undefined,
+          subcategory_id: r.subcategory_id || undefined,
+          is_active: 1,
+        });
       }
-      console.log(`[BulkUpload] uploaded=${items.length}, upload_errors=${errors.length}`);
+      console.log(`[BulkUpload] ready=${items.length}, skipped=${errors.length}`);
       if (items.length === 0) {
         setResult({ created: 0, failed: errors.length, errors });
         setSubmitting(false);

@@ -1,5 +1,7 @@
 "use client";
 
+import ImageUploadField from "@/components/ImageUploadField";
+
 interface CategoryFormProps {
   form: any;
   setForm: (form: any) => void;
@@ -47,14 +49,11 @@ export default function CategoryForm({ form, setForm, onSubmit, onCancel, editin
             rows={2}
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">URL รูปภาพ</label>
-          <input
-            value={form.image_url}
-            onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-            className="input-field"
-          />
-        </div>
+        <ImageUploadField
+          label="รูปภาพหมวดหมู่"
+          value={form.image_url || ""}
+          onChange={(url) => setForm({ ...form, image_url: url })}
+        />
         <div className="flex gap-2">
           <button type="submit" className="btn-primary">
             {editing ? "บันทึก" : "เพิ่ม"}

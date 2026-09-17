@@ -8,3 +8,14 @@ pages_build_output_dir = ".vercel/output/static"
 binding = "DB"
 database_name = "knkpart-db"
 database_id = "34f14d8d-b16a-41c1-86b0-7426139ef5ea"  # APAC region - สร้าง 2026-09-17
+
+# R2 bucket binding — for product images
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "knkpart"
+preview_bucket_name = "knkpart"
+
+# Public URL prefix for images served from R2
+[vars]
+R2_PUBLIC_URL = "https://pub-1e2cdd59c90c4686aed0227d761e3581.r2.dev"
+R2_FOLDER = "product"
