@@ -1,10 +1,8 @@
-// Script สำหรับสร้าง PBKDF2 hash (ใช้เมื่อต้องการเปลี่ยนรหัสผ่าน admin)
-// PBKDF2 ผ่าน Web Crypto API — เร็วใน Cloudflare Workers (<5ms vs 60-100ms ของ bcrypt)
+// Script สำหรับสร้าง SHA-256 hash (ใช้เมื่อต้องการเปลี่ยนรหัสผ่าน admin)
+// SHA-256(salt+password) — เร็วมากใน Cloudflare Workers (<1ms vs 60-100ms ของ bcrypt)
+// Format: sha256$<saltHex>$<hashHex>
 // วิธีใช้: node scripts/hash-password.js "your-new-password"
 const crypto = require('crypto');
-
-const PBKDF2_ITERATIONS = 100_000;
-const PBKDF2_KEYLEN = 32;
 
 const password = process.argv[2];
 if (!password) {
@@ -13,8 +11,8 @@ if (!password) {
 }
 
 const salt = crypto.randomBytes(16);
-const derived = crypto.pbkdf2Sync(password, salt, PBKDF2_ITERATIONS, PBKDF2_KEYLEN, 'sha256');
-const hash = `pbkdf2$${PBKDF2_ITERATIONS}$${salt.toString('hex')}$${derived.toString('hex')}`;
+const derived = crypto.createHash('sha256').update(salt).update(password).digest();
+const hash = `sha256$${salt.toString('hex')}$${derived.toString('hex')}`;
 
 console.log('Password:', password);
 console.log('Hash:', hash);

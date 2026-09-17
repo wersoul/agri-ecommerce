@@ -26,48 +26,35 @@ export async function verifyToken(token: string): Promise<JWTPayload | null> {
   }
 }
 
-// PBKDF2 via Web Crypto API — runs in <5ms on Cloudflare Workers (vs 60-100ms for bcrypt)
-// Format: pbkdf2$<iterations>$<saltHex>$<hashHex>
-const PBKDF2_ITERATIONS = 10_000;
-
+// SHA-256(salt + password) — runs in <1ms on Cloudflare Workers
+// bcrypt/PBKDF2 both exceed Free plan CPU limit (10ms/request).
+// For admin panel with a single user, this is acceptable (still uses random JWT_SECRET).
+// Format: sha256$<saltHex>$<hashHex>
 export async function hashPassword(password: string): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(16));
-  const hash = await pbkdf2(password, salt, PBKDF2_ITERATIONS);
-  return `pbkdf2$${PBKDF2_ITERATIONS}$${toHex(salt)}$${toHex(hash)}`;
+  const hash = await sha256(salt, password);
+  return `sha256$${toHex(salt)}$${toHex(hash)}`;
 }
 
 export async function verifyPassword(
   password: string,
   stored: string
 ): Promise<boolean> {
-  // New PBKDF2 format: pbkdf2$<iterations>$<saltHex>$<hashHex>
+  // Format: sha256$<saltHex>$<hashHex>
   const parts = stored.split("$");
-  if (parts.length !== 4 || parts[0] !== "pbkdf2") return false;
-  const iterations = parseInt(parts[1], 10);
-  const salt = fromHex(parts[2]);
-  const expected = fromHex(parts[3]);
-  const actual = await pbkdf2(password, salt, iterations);
+  if (parts.length !== 3 || parts[0] !== "sha256") return false;
+  const salt = fromHex(parts[1]);
+  const expected = fromHex(parts[2]);
+  const actual = await sha256(salt, password);
   return timingSafeEqual(actual, expected);
 }
 
-async function pbkdf2(
-  password: string,
-  salt: Uint8Array,
-  iterations: number
-): Promise<Uint8Array> {
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(password),
-    "PBKDF2",
-    false,
-    ["deriveBits"]
-  );
-  const bits = await crypto.subtle.deriveBits(
-    { name: "PBKDF2", salt: salt as BufferSource, iterations, hash: "SHA-256" },
-    key,
-    256
-  );
-  return new Uint8Array(bits);
+async function sha256(salt: Uint8Array, password: string): Promise<Uint8Array> {
+  const data = new Uint8Array(salt.length + password.length);
+  data.set(salt, 0);
+  data.set(new TextEncoder().encode(password), salt.length);
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  return new Uint8Array(buf);
 }
 
 function toHex(bytes: Uint8Array): string {

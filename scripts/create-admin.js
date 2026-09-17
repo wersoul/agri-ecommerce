@@ -10,13 +10,10 @@
 const crypto = require('crypto');
 const { execSync } = require('child_process');
 
-const PBKDF2_ITERATIONS = 100_000;
-const PBKDF2_KEYLEN = 32;
-
-function pbkdf2Hash(password) {
+function sha256Hash(password) {
   const salt = crypto.randomBytes(16);
-  const hash = crypto.pbkdf2Sync(password, salt, PBKDF2_ITERATIONS, PBKDF2_KEYLEN, 'sha256');
-  return `pbkdf2$${PBKDF2_ITERATIONS}$${salt.toString('hex')}$${hash.toString('hex')}`;
+  const hash = crypto.createHash('sha256').update(salt).update(password).digest();
+  return `sha256$${salt.toString('hex')}$${hash.toString('hex')}`;
 }
 
 const args = process.argv.slice(2);
@@ -33,7 +30,7 @@ if (!username || !password) {
 }
 
 const emailValue = email || `${username}@agri-shop.com`;
-const hash = pbkdf2Hash(password);
+const hash = sha256Hash(password);
 const flag = remote ? '--remote' : '--local';
 
 console.log(`\n🔐 กำลังสร้าง Admin user (${remote ? 'REMOTE' : 'LOCAL'})\n`);
