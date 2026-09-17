@@ -5,25 +5,6 @@ import Link from "next/link";
 import { Product } from "@/lib/types";
 import { addToCart } from "@/lib/cart";
 
-const CAT_NAMES = ["", "", "อะไหล่เครื่องตัดหญ้า", "อุปกรณ์ให้น้ำ", "ปุ๋ยและยา", "เมล็ดพันธุ์", "เครื่องมือเกษตร", "", "", "คอนเดนเซอร์", "ซีลปั๊มน้ำ", "อะไหล่ตัดหญ้า", "อะไหล่ปั๊มชัก", "อะไหล่พ่นยา", "อะไหล่เครื่องเลื่อย", "อะไหล่เครื่องแรง", "อะไหล่เครื่องพ่นลมหว่านปุ๋ย", "อะไหล่รถไถเดินตาม", "เพรสเชอร์สวิทช์", "โอเวอร์โหลดสวิทช์", "อะไหล่อื่นๆ"];
-const CAT_SLUGS = ["", "", "mower-parts", "irrigation", "fertilizer", "seeds", "tools", "", "", "condensor", "pump-seal", "grass-cutter-parts", "pump-parts", "sprayer-parts", "chainsaw-parts", "engine-parts", "blower-spreader-parts", "walking-tractor-parts", "pressure-switch", "overload-switch", "other-parts"];
-
-function getStaticProduct(id: number): Product | null {
-  if (id >= 17 && id <= 100) {
-    const catIdxs = [10, 10, 10, 11, 11, 12, 13, 14, 15, 15, 16, 17, 18, 9, 9, 9, 15, 15, 15, 11, 11, 13, 13, 13, 16, 16, 16, 17, 12, 12, 14, 14, 18, 18, 18, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
-    const catId = catIdxs[(id - 17) % catIdxs.length];
-    const idx = catId;
-    return {
-      id, name: "อะไหล่เกษตร KNK Part #" + id, slug: "knk-product-" + id,
-      description: "อะไหล์เกษตรคุณภาพดี " + CAT_NAMES[idx] + " จาก KNK Part",
-      price: 50 + (id * 11) % 2000, stock: 10 + (id % 80), sku: "KNK-" + id,
-      image_url: "/images/knkpart/slides/slide1.jpg",
-      category_id: catId, category_name: CAT_NAMES[idx], category_slug: CAT_SLUGS[idx], is_active: 1,
-    };
-  }
-  return null;
-}
-
 export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,9 +14,24 @@ export default function ProductDetailPage() {
   useEffect(() => {
     const qs = new URLSearchParams(window.location.search);
     const id = parseInt(qs.get("id") || "0");
-    const p = getStaticProduct(id);
-    setProduct(p);
-    setLoading(false);
+    if (!id) {
+      setLoading(false);
+      return;
+    }
+    fetch(`/api/products/${id}`)
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((d) => {
+        setProduct(d.product ?? null);
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.error("Failed to load product", e);
+        setProduct(null);
+        setLoading(false);
+      });
   }, []);
 
   const handleAdd = () => {
