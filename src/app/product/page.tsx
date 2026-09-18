@@ -24,23 +24,22 @@ export default function ProductDetailPage() {
     setProduct(null);
     setLoading(true);
     setError(null);
-    fetch(`/api/products/${id}`, { cache: "no-store" })
+
+    // ✅ วิธีใหม่: ดึงสินค้าทั้งหมดจาก /api/products แล้วหา id ที่ตรง
+    // หลีกเลี่ยงปัญหา stale bundle หรือ endpoint ไม่ตอบ
+    fetch(`/api/products?_t=${Date.now()}`, { cache: "no-store" })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       })
       .then((d) => {
-        if (!d.product) {
-          setError(`ไม่พบสินค้า id=${id}`);
+        const all: Product[] = d.products || [];
+        const found = all.find((p) => p.id === id);
+        if (!found) {
+          setError(`ไม่พบสินค้า id=${id} (สินค้าทั้งหมด ${all.length} รายการ)`);
           setProduct(null);
         } else {
-          // Safety: ensure returned id matches requested id
-          if (d.product.id !== id) {
-            setError(`รหัสสินค้าไม่ตรงกัน (คาด ${id}, ได้ ${d.product.id})`);
-            setProduct(null);
-            return;
-          }
-          setProduct(d.product);
+          setProduct(found);
         }
         setLoading(false);
       })
