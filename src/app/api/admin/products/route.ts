@@ -3,6 +3,7 @@ import { getDB } from "@/lib/db";
 export const runtime = "edge";
 
 import { verifyAdmin } from "@/lib/api-auth";
+import { friendlyDbError } from "@/lib/db-errors";
 
 export async function GET(req: NextRequest) {
   const authError = await verifyAdmin(req);
@@ -22,7 +23,11 @@ export async function GET(req: NextRequest) {
       .all();
     return NextResponse.json(results || []);
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const friendly = friendlyDbError(err);
+    return NextResponse.json(
+      { error: friendly.message, code: friendly.code },
+      { status: friendly.status }
+    );
   }
 }
 
@@ -41,7 +46,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const skuVal = data.sku && String(data.sku).trim() !== "" ? String(data.sku).trim() : null;
+    // SKU: เก็บเป็น NULL เมื่อเว้นว่าง เพื่อหลีกเลี่ยง UNIQUE constraint
+    const skuVal =
+      data.sku && String(data.sku).trim() !== ""
+        ? String(data.sku).trim()
+        : null;
     await db
       .prepare(
         `INSERT INTO products (name, slug, description, price, stock, sku, image_url, category_id, subcategory_id, is_active)
@@ -63,6 +72,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const friendly = friendlyDbError(err);
+    return NextResponse.json(
+      { error: friendly.message, code: friendly.code },
+      { status: friendly.status }
+    );
   }
 }
