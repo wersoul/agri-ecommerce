@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,7 +22,12 @@ export default function LoginPage() {
       if (!r.ok || !data.ok) throw new Error(data.error || "เข้าสู่ระบบไม่สำเร็จ");
       // Also store in localStorage for client-side use
       try { localStorage.setItem("customer_token", data.token); localStorage.setItem("customer", JSON.stringify(data.customer)); } catch {}
-      router.push("/account");
+      // แจ้ง component อื่นๆ (Navbar, Cart) ว่า auth เปลี่ยนแล้ว
+      try { window.dispatchEvent(new Event("customer-auth-changed")); } catch {}
+      // ใช้ window.location.href เพื่อ force full page reload
+      // ให้ state ทั้งหมด (Navbar, Cart, Account, etc.) refresh จาก localStorage ใหม่ทันที
+      // router.push() อย่างเดียวอาจไม่ trigger useEffect ใหม่ในทุก component
+      window.location.href = "/account";
     } catch (e: any) {
       setError(e.message);
     } finally {

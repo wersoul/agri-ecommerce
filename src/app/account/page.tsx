@@ -147,7 +147,7 @@ export default function AccountPage() {
                   {orders.map(o => {
                     const s = STATUS_LABELS[o.status] || { label: o.status, color: "bg-gray-100 text-gray-800" };
                     return (
-                      <Link key={o.id} href={`/account/orders?id=${o.id}`}
+                      <Link key={o.id} href={`/account/orders/detail?id=${o.id}`}
                         className="block p-4 border border-gray-200 rounded-lg hover:border-primary-300 hover:bg-primary-50">
                         <div className="flex justify-between items-start gap-4">
                           <div className="min-w-0">
