@@ -33,7 +33,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
 function CustomerDetailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const id = searchParams.get("id");
+  const id = searchParams.get("id") || "";
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
@@ -43,20 +43,29 @@ function CustomerDetailContent() {
   const [editForm, setEditForm] = useState<Partial<Customer>>({});
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    if (!id) { router.push("/admin/customers"); return; }
+    // รอ hydration เสร็จก่อนค่อยตรวจ id
+    // ป้องกัน redirect ก่อน useSearchParams อ่านค่า query จาก URL จริง
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!id) { window.location.href = "/admin/customers"; return; }
     const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
-    if (!token) { router.push("/admin/login"); return; }
+    if (!token) { window.location.href = "/admin/login"; return; }
     loadDetail(token);
-  }, [id]);
+  }, [id, hydrated]);
 
   async function loadDetail(token: string) {
     setLoading(true);
     try {
-      const r = await fetch(`/api/admin/customers//`, { headers: { Authorization: `Bearer ${token}` } });
-      if (r.status === 401) { router.push("/admin/login"); return; }
-      if (!r.ok) { router.push("/admin/customers"); return; }
+      const r = await fetch(`/api/admin/customers/${id}/`, { headers: { Authorization: `Bearer ${token}` } });
+      if (r.status === 401) { window.location.href = "/admin/login"; return; }
+      if (r.status === 404) { window.location.href = "/admin/customers"; return; }
+      if (!r.ok) { window.location.href = "/admin/customers"; return; }
       const data = await r.json();
       setCustomer(data.customer);
       setOrders(data.orders || []);
@@ -85,7 +94,7 @@ function CustomerDetailContent() {
     setSaving(true);
     setMessage("");
     try {
-      const r = await fetch(`/api/admin/customers//`, {
+      const r = await fetch(`/api/admin/customers/${id}/`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(editForm),
@@ -109,7 +118,7 @@ function CustomerDetailContent() {
     if (!customer) return;
     const token = localStorage.getItem("admin_token");
     if (!token) return;
-    const r = await fetch(`/api/admin/customers//`, {
+    const r = await fetch(`/api/admin/customers/${id}/`, {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ is_active: customer.is_active ? 0 : 1 }),
@@ -124,7 +133,7 @@ function CustomerDetailContent() {
     if (!customer) return;
     const token = localStorage.getItem("admin_token");
     if (!token) return;
-    const r = await fetch(`/api/admin/customers//`, {
+    const r = await fetch(`/api/admin/customers/${id}/`, {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ is_verified: customer.is_verified ? 0 : 1 }),
@@ -142,7 +151,7 @@ function CustomerDetailContent() {
     if (!token) return;
     setDeleting(true);
     try {
-      const r = await fetch(`/api/admin/customers//`, {
+      const r = await fetch(`/api/admin/customers/${id}/`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

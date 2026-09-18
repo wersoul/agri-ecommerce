@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 interface OrderDetail {
@@ -23,30 +23,57 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
 
 function OrderDetailContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const id = searchParams.get("id");
+  const id = searchParams.get("id") || "";
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    if (!id) { router.push("/account"); return; }
+    // รอ hydration เสร็จก่อนค่อยตรวจ id
+    // ป้องกัน redirect ก่อน useSearchParams อ่านค่า query จาก URL จริง
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!id) {
+      // ไม่มี id → กลับไปหน้าบัญชี (ใช้ window.location เพื่อความแน่นอน)
+      window.location.href = "/account";
+      return;
+    }
     const token = typeof window !== "undefined" ? localStorage.getItem("customer_token") : null;
-    if (!token) { router.push("/login"); return; }
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
     (async () => {
       try {
-        const r = await fetch(`/api/customer/orders/${id}`, {
+        const r = await fetch(`/api/customer/orders/${id}/`, {
           credentials: "include",
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+          headers: { Authorization: `Bearer ${token}` },
         });
-        if (r.status === 401) { router.push("/login"); return; }
-        if (!r.ok) { router.push("/account"); return; }
+        if (r.status === 401) {
+          window.location.href = "/login";
+          return;
+        }
+        if (r.status === 404) {
+          // ออร์เดอร์ไม่พบ หรือไม่ใช่ของลูกค้านี้
+          window.location.href = "/account";
+          return;
+        }
+        if (!r.ok) {
+          window.location.href = "/account";
+          return;
+        }
         const data = await r.json();
         setOrder(data.order);
+      } catch {
+        window.location.href = "/account";
       } finally {
         setLoading(false);
       }
     })();
-  }, [id, router]);
+  }, [id, hydrated]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center">กำลังโหลด...</div>;
   if (!order) return null;
