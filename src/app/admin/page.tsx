@@ -297,6 +297,13 @@ export default function AdminDashboard() {
           <h3 className="font-bold text-xl mb-2">🔑 เปลี่ยนรหัสผ่าน</h3>
           <p className="text-gray-600">เปลี่ยนรหัสผ่านบัญชีผู้ดูแลระบบ</p>
         </Link>
+        <Link
+          href="/admin/profile"
+          className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition"
+        >
+          <h3 className="font-bold text-xl mb-2">👤 ข้อมูลส่วนตัว / อีเมลแจ้งเตือน</h3>
+          <p className="text-gray-600">ตั้งอีเมลที่ใช้รับแจ้งเตือนเมื่อมีออร์เดอร์ใหม่</p>
+        </Link>
       </div>
     </div>
   );

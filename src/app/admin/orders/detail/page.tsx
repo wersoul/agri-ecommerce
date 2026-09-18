@@ -31,6 +31,7 @@ function OrderDetailContent() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [emailing, setEmailing] = useState(false);
   const [message, setMessage] = useState("");
   // edit form state
   const [status, setStatus] = useState("pending");
@@ -130,6 +131,32 @@ function OrderDetailContent() {
 
   function printInvoice() { window.print(); }
 
+  async function sendEmailToCustomer() {
+    if (!order) return;
+    const token = localStorage.getItem("admin_token");
+    if (!token) return;
+    if (!order.customer_email || !String(order.customer_email).trim()) {
+      setMessage("❌ ออร์เดอร์นี้ไม่มีอีเมลลูกค้า ไม่สามารถส่งอีเมลได้");
+      return;
+    }
+    if (!confirm(`ส่งอีเมลรายละเอียดคำสั่งซื้อ #${order.order_number} ไปยัง ${order.customer_email} ?`)) return;
+    setEmailing(true);
+    setMessage("");
+    try {
+      const r = await fetch(`/api/admin/orders/${id}/email/`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || "ส่งอีเมลไม่สำเร็จ");
+      setMessage(`✅ ส่งอีเมลไปยัง ${data.sent_to || order.customer_email} เรียบร้อยแล้ว`);
+    } catch (e: any) {
+      setMessage("❌ " + (e.message || "ส่งอีเมลไม่สำเร็จ"));
+    } finally {
+      setEmailing(false);
+    }
+  }
+
   // SSR fallback: if useParams hasn't populated yet on first render, show loading
   if (!id) return <div className="min-h-screen flex items-center justify-center">กำลังโหลด...</div>;
 
@@ -160,8 +187,16 @@ function OrderDetailContent() {
       <div className="max-w-4xl mx-auto no-print">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <Link href="/admin/orders" className="text-sm text-gray-600 hover:text-gray-800">← กลับหน้าคำสั่งซื้อ</Link>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <button onClick={printInvoice} className="px-4 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800">🖨️ สร้าง PDF ใบแจ้งหนี้</button>
+            <button
+              onClick={sendEmailToCustomer}
+              disabled={emailing || !order.customer_email}
+              title={order.customer_email ? `ส่งอีเมลไปยัง ${order.customer_email}` : "ออร์เดอร์นี้ไม่มีอีเมลลูกค้า"}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {emailing ? "กำลังส่ง..." : "📧 ส่งอีเมลแจ้งลูกค้า"}
+            </button>
             <button onClick={deleteOrder} disabled={deleting} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50">{deleting ? "กำลังลบ..." : "🗑️ ลบออร์เดอร์"}</button>
           </div>
         </div>
