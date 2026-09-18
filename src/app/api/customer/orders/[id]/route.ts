@@ -24,7 +24,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
 
   const items = await db.prepare(
     `SELECT oi.id, oi.product_id, oi.product_name, oi.quantity,
-            oi.unit_price, oi.subtotal, p.image_url AS product_image
+            oi.product_price AS unit_price, oi.subtotal, p.image_url AS product_image
      FROM order_items oi
      LEFT JOIN products p ON p.id = oi.product_id
      WHERE oi.order_id = ?`
